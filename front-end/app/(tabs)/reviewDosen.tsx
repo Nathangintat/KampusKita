@@ -2,10 +2,10 @@ import { StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-export default function HomeScreen() {
+export default function ReviewDosenScreen() {
   return (
     <SafeAreaView>
-        <Text style={styles.h1}>Home Screen</Text>
+        <Text style={styles.h1}>Review Dosen Screen</Text>
     </SafeAreaView>
   );
 }
