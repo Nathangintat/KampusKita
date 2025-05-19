@@ -1,39 +1,48 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { Colors } from '@/constants/Colors';
 import 'react-native-reanimated';
+import React, { useState } from 'react';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-const colors = {
-    text: "#F0ECEC",
-    background1: "#272727",
-    background2: "#1E1E1E",
-    background3: "#171717",
-    primary: "#4A9FD2",
-    success: "#6FFF56",
-    error: "#FF5656",
-};
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+    const [loaded, error] = useFonts({
+        Poppins700: require('../assets/fonts/Poppins-Bold.ttf'),
+        Poppins600: require('../assets/fonts/Poppins-SemiBold.ttf'),
+        Poppins500: require('../assets/fonts/Poppins-Medium.ttf'),
+        Poppins400: require('../assets/fonts/Poppins-Regular.ttf'),
+    });
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+    React.useEffect(() => {
+        async function lockOrientationToPortrait() {
+            await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+        }
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+        lockOrientationToPortrait();
+
+        if (loaded || error) {
+            SplashScreen.hideAsync();
+        }
+    }, [loaded, error]);
+
+
+    if (!loaded && !error) {
+        return null;
+    }
+
+    return (
+        <>
+            <Stack screenOptions={{
+                contentStyle: { backgroundColor: Colors.background3 }
+            }}>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+        </>
+    );
 }
