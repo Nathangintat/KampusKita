@@ -6,6 +6,7 @@ import { Title } from '@/components/Title';
 import { Subtitle } from '@/components/Subtitle';
 import { TotalRating } from '@/components/TotalRating';
 import { ReviewHeader } from '@/components/ReviewHeader';
+import { ReviewItemHeader } from '@/components/ReviewItemHeader';
 
 export default function CampusScreen() {
   return (
@@ -34,6 +35,17 @@ export default function CampusScreen() {
                 count={20} 
                 onPress={() => console.log("Tulis Ulasan")}
                 />
+
+                <View style={{ backgroundColor: Colors.background2, padding: 10}}>
+                    <ReviewItemHeader
+                        like={1}
+                        dislike={10}
+                        hasLiked={true}
+                        hasDisliked={false}
+                        date={new Date()}
+                    />
+                </View>
+
             </View>
         </ScrollView>
 
