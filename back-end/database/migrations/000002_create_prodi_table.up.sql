@@ -1,0 +1,5 @@
+-- prodi
+CREATE TABLE IF NOT EXISTS prodi (
+    id SERIAL PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL
+);
