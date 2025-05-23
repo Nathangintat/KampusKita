@@ -176,25 +176,31 @@ export default function CampusScreen() {
                 date={new Date(review.date)}
               />
 
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  padding: 8,
+                }}
+              >
                 <Text
                   style={{
                     color: Colors.text,
                     fontSize: 24,
                     fontWeight: "bold",
-                    margin: 8,
+                    marginRight: 8,
                   }}
                 >
-                  4.5
-                  {/* TODO: Buat fungsi untuk menhitung rata rata review */}
+                  4.0
+                  {/* TODO: Buat fungsi untuk menghitung rata-rata review */}
                 </Text>
 
                 <Text
                   style={{
                     color: Colors.text,
                     fontSize: 14,
-                    marginTop: 8,
-                    marginLeft: 8,
+                    flex: 1,
+                    marginLeft: 8
                   }}
                 >
                   {review.content}
