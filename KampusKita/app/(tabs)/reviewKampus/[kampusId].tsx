@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams } from "expo-router";
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -15,6 +16,8 @@ import { SmallText } from '@/components/SmallText';
 import { BigButton } from '@/components/BigButton';
 
 export default function ReviewKampusScreen() {
+    const local = useLocalSearchParams();
+
     const [fasilitas, setFasilitas] = useState<number>(0);
     const [wifi, setWifi] = useState<number>(0);
     const [lokasi, setLokasi] = useState<number>(0);
@@ -23,7 +26,6 @@ export default function ReviewKampusScreen() {
 
   return (
     <SafeAreaView 
-        edges={['top', 'left', 'right']} 
         style={{
             backgroundColor: Colors.background1,
             height: "100%",

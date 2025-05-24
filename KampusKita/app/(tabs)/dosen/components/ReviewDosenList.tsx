@@ -1,10 +1,13 @@
 import { FlatList, View, Text, StyleSheet } from "react-native";
-import { ReviewItemHeader } from "./ReviewItemHeader";
+import { ReviewItemHeader } from "@/components/ReviewItemHeader";
 import { Colors } from "@/constants/Colors";
 import { useState } from "react";
+import { DosenReviewType } from "../type";
+
+export default {};
 
 interface Props {
-    list: ReviewDosenItem[];
+    list: DosenReviewType[];
 }
 
 export function ReviewDosenList({ list }: Props) {
@@ -13,17 +16,17 @@ export function ReviewDosenList({ list }: Props) {
             scrollEnabled={false}
             data={list}
             renderItem={({item}) => <ReviewItem item={item}/>}
-            keyExtractor={(item) => `${item.reviewId}`}
+            keyExtractor={(item) => `${item.id}`}
         />
     );
 }
 
 interface ReviewItemProps {
-    item: ReviewDosenItem
+    item: DosenReviewType
 }
 
 function ReviewItem({ item }: ReviewItemProps) {
-    const [data, setData] = useState<ReviewDosenItem>(item);
+    const [data, setData] = useState<DosenReviewType>(item);
 
     return (
         <View style={styles.container}>

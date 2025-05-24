@@ -21,6 +21,7 @@ export function SearchBox({ style, placeholder, onPress, value, onChangeText }: 
                 style={styles.searchTextBox}
                 value={value}
                 onChangeText={onChangeText}
+                onSubmitEditing={onPress}
             />
 
             <Pressable style={{ padding: 3 }} android_ripple={{

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useLocalSearchParams } from 'expo-router';
+
 import { Colors } from '@/constants/Colors';
 import { HeaderWithBackButton } from '@/components/HeaderWithBackButton';
 import { Title } from '@/components/Title';
@@ -12,11 +14,11 @@ import { SmallText } from '@/components/SmallText';
 import { BigButton } from '@/components/BigButton';
 
 export default function ReviewDosenScreen() {
+    const local = useLocalSearchParams();
     const [rating, setRating] = useState<number>(0);
 
   return (
     <SafeAreaView 
-        edges={['top', 'left', 'right']} 
         style={{
             backgroundColor: Colors.background1,
             height: "100%",

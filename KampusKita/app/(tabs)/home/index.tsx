@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { ScrollView, Text, TextInput, View, Pressable, StyleSheet } from "react-native";
+import { ScrollView, Text, View, Pressable, StyleSheet } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,40 +9,52 @@ import { EmphText } from "./components/EmphText";
 import { SearchBox } from "./components/SearchBox";
 import { ListItem } from "./components/ListItem";
 import { 
-    TopLecturerItem, 
-    TopUniversityItem, 
-    topUniversities,
-    topLecturers
+    TopDosenType, 
+    TopKampusType, 
+    topDosenDummy,
+    topKampusDummy,
 } from "./types";
+
 
 export default function HomeScreen() {
     const router = useRouter();
 
-    const [username, setUsername] = useState<string>("Username");
-    const [topDosen, setTopDosen] = useState<TopLecturerItem[]>(topLecturers);
-    const [topKampus, setTopKampus] = useState<TopUniversityItem[]>(topUniversities);
-
+    const [username, setUsername] = useState<string>("");
+    const [topDosen, setTopDosen] = useState<TopDosenType[]>([]);
+    const [topKampus, setTopKampus] = useState<TopKampusType[]>([]);
     const [search, setSearch] = useState<string>("");
 
     function handlePressDosen(id: number) {
         console.log(`handlePressDosen(${id})`);
-        router.navigate("/(tabs)/dosen");
+        router.navigate(`/(tabs)/dosen/${id}`);
     }
 
     function handlePressKampus(id: number) {
         console.log(`handlePressKampus(${id})`);
-        router.navigate("/(tabs)/campus");
+        router.navigate(`/(tabs)/campus/${id}`);
     }
 
     function handleSearch() {
-        if (!search) return;
+        if (search.length < 3) return;
+
         console.log(`handleSearch(${search})`);
         router.navigate(`/(tabs)/search/${search}`);
+        setSearch("");
     }
 
+    useEffect(() => {
+        // Fetch here
+
+        // Store JWT:
+        // https://docs.expo.dev/versions/latest/sdk/securestore/
+ 
+        setUsername("Username");
+        setTopDosen(topDosenDummy);
+        setTopKampus(topKampusDummy);
+    }, []);
+
     return (
-      <SafeAreaView
-        style={{
+      <SafeAreaView style={{
           backgroundColor: Colors.background1,
           flex: 1,
           paddingHorizontal: 28,
@@ -75,13 +87,13 @@ export default function HomeScreen() {
               <View style={styles.rankingContainer}>
                   <CustomText><EmphText>Dosen </EmphText>terbaik di bulan ini</CustomText>
 
-                  {topDosen.map((lecturer, index) => (
+                  {topDosen.map((item, index) => (
                       <ListItem 
-                          key={lecturer.dosenId} 
-                          onPress={() => handlePressDosen(lecturer.dosenId)}
+                          key={index} 
+                          onPress={() => handlePressDosen(item.id)}
                           rank={index+1} 
-                          topText={lecturer.nama} 
-                          bottomText={lecturer.kampus}
+                          topText={item.nama} 
+                          bottomText={item.kampus}
                       />
                   ))}
               </View>
@@ -90,13 +102,13 @@ export default function HomeScreen() {
               <View style={styles.rankingContainer}>
                 <CustomText><EmphText>Universitas </EmphText>dengan fasilitas terbaik</CustomText>
 
-                {topKampus.map((uni, index) => (
+                {topKampus.map((item, index) => (
                     <ListItem
-                        key={uni.kampusId} 
-                        onPress={() => handlePressKampus(uni.kampusId)}
+                        key={index} 
+                        onPress={() => handlePressKampus(item.id)}
                         rank={index+1} 
-                        topText={uni.nama} 
-                        bottomText={uni.namaPendek}
+                        topText={item.nama} 
+                        bottomText={item.namaPendek}
                     />
                 ))}
               </View>

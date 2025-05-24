@@ -11,7 +11,6 @@ import Feather from '@expo/vector-icons/Feather';
 export default function VerifikasiScreen() {
   return (
     <SafeAreaView 
-        edges={['top', 'left', 'right']} 
         style={{
             backgroundColor: Colors.background1,
             height: "100%",
@@ -19,7 +18,7 @@ export default function VerifikasiScreen() {
     >
         <HeaderWithBackButton>Verifikasi</HeaderWithBackButton>
 
-        <View style={{ paddingHorizontal: 28, justifyContent: "space-between", height: "100%" }}>
+        <View style={{ paddingHorizontal: 28, justifyContent: "space-between" }}>
             <View style={{ marginBottom: 70, gap: 10 }}>
                 <View style={{ gap: 5 }}><CustomTextInput title="NIM" placeholder="Nomor Induk Mahasiswa" /></View>
                 <View style={{ gap: 5 }}><CustomTextInput title="Universitas" placeholder="Universitas"/></View>
@@ -49,22 +48,13 @@ export default function VerifikasiScreen() {
                             <Subtitle style={{ color: Colors.lightGrey }}>Pilih Gambar</Subtitle>
                             <Subtitle style={{ color: Colors.lightGrey, fontSize: 12 }}>JPG/PNG</Subtitle>
                         </View>
-
-                        {/*
-                    <TextInput
-                    style={{
-                    }}
-                    placeholderTextColor={Colors.lightGrey}
-                    placeholder={placeholder}
-                    multiline={multiline}
-                    textAlignVertical="top"
-                    />
-                    */}
                     </Pressable>
                 </View>
             </View>
 
-            <View style={{ gap: 10, marginBottom: 30 }}>
+            <View style={{ flex: 1 }}/>
+
+            <View style={{ gap: 10 }}>
                 <SmallText style={{ textAlign: "center" }}>Validasi akan memakan waktu kurang dari 24 jam</SmallText>
                 <BigButton onPress={() => console.log("validasi")}>Validasi</BigButton>
             </View>

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScrollView, Text, FlatList, View, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -9,21 +9,22 @@ import { HeaderWithBackButton } from "@/components/HeaderWithBackButton";
 import { SearchBox } from "../home/components/SearchBox";
 import { Colors } from "@/constants/Colors";
 import { 
-    LecturerItem, 
-    UniversityItem,
-    lecturers,  
-    universities,
+    SearchDosenType,
+    SearchKampusType,
+    searchDosenDummy,
+    searchKampusDummy,
 } from "./types";
 
 export default function SearchScreen() {
     const local = useLocalSearchParams();
     const router = useRouter();
-    const [dosen, setDosen] = useState<LecturerItem[]>(lecturers);
-    const [kampus, setKampus] = useState<UniversityItem[]>(universities);
 
-    const [search, setSearch] = useState<string>(local.search);
-    const [selectedPage, setSelectedPage] = useState<number>(0);
     const pagerRef = useRef<PagerView>(null);
+
+    const [dosen, setDosen] = useState<SearchDosenType[]>([]);
+    const [kampus, setKampus] = useState<SearchKampusType[]>([]);
+    const [search, setSearch] = useState<string>("");
+    const [selectedPage, setSelectedPage] = useState<number>(0);
 
     function handleChangePage(index: number) {
         if (pagerRef.current) {
@@ -33,7 +34,17 @@ export default function SearchScreen() {
 
     function handleSearch() {
         console.log(`handleSearch(${search})`);
+
+        // fetch again here
     }
+
+    useEffect(() => {
+        setSearch(local.search);
+
+        // fetch here
+        setDosen(searchDosenDummy);
+        setKampus(searchKampusDummy);
+    }, []);
 
     return (
         <SafeAreaView
@@ -72,8 +83,8 @@ export default function SearchScreen() {
                                 <Pressable style={styles.container} android_ripple={{
                                     color: "rgba(0,0,0,0.3)",
                                     borderless: false,
-                                }} onPress={() => router.navigate("/(tabs)/dosen")}>
-                                    <View>
+                                }} onPress={() => router.navigate(`/(tabs)/dosen/${item.id}`)}>
+                                    <View style={{ flex: 1 }}>
                                         <Text style={styles.topText}>{item.nama}</Text>
                                         <Text style={styles.midText}>{item.kampus}</Text>
                                         <Text style={styles.bottomText}>Program Studi {item.prodi}</Text>
@@ -83,7 +94,7 @@ export default function SearchScreen() {
                                 </Pressable>
                             </View>
                         )}
-                        keyExtractor={(item) => `${item.dosenId}`}
+                        keyExtractor={(item) => `${item.id}`}
                     />
                 </ScrollView>
 
@@ -100,7 +111,7 @@ export default function SearchScreen() {
                                 <Pressable style={styles.container} android_ripple={{
                                     color: "rgba(0,0,0,0.3)",
                                     borderless: false,
-                                }} onPress={() => router.navigate("/(tabs)/campus")}>
+                                }} onPress={() => router.navigate(`/(tabs)/campus/${item.id}`)}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.topText}>{item.nama}</Text>
                                         <Text style={styles.bottomText}>Program Studi {item.namaPendek}</Text>
@@ -110,7 +121,7 @@ export default function SearchScreen() {
                                 </Pressable>
                             </View>
                         )}
-                        keyExtractor={(item) => `${item.kampusId}`}
+                        keyExtractor={(item) => `${item.id}`}
                     />
                 </ScrollView>
             </PagerView>
