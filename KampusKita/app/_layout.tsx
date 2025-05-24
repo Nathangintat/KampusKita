@@ -28,10 +28,11 @@ export default function RootLayout() {
     return (
         <>
             <Stack screenOptions={{
-                contentStyle: { backgroundColor: Colors.background3 }
+                contentStyle: { backgroundColor: Colors.background3 },
+                headerShown: false,
             }}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
+                <Stack.Screen name="(tabs)/home/index"/>
+                {/*<Stack.Screen name="+not-found" />*/}
             </Stack>
             <StatusBar style="auto" />
         </>

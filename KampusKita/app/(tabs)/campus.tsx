@@ -5,7 +5,11 @@ import { Subtitle } from "@/components/Subtitle";
 import { Title } from "@/components/Title";
 import { TotalRating } from "@/components/TotalRating";
 import { Colors } from "@/constants/Colors";
-import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -66,27 +70,27 @@ export default function CampusScreen() {
   const ratingCategories = [
     {
       label: "Fasilitas",
-      icon: <FontAwesome5 name="building" size={16} color="white" />,
+      icon: <MaterialIcons name="corporate-fare" size={20} color={Colors.text} />,
       value: rating.fasilitas,
     },
     {
       label: "Wifi",
-      icon: <Ionicons name="wifi" size={16} color="white" />,
+      icon: <MaterialIcons name="wifi" size={20} color={Colors.text} />,
       value: rating.wifi,
     },
     {
       label: "Lokasi",
-      icon: <Ionicons name="location" size={16} color="white" />,
+      icon: <MaterialCommunityIcons name="map-marker-outline" size={20} color={Colors.text} />,
       value: rating.lokasi,
     },
     {
       label: "Organisasi",
-      icon: <Ionicons name="people" size={16} color="white" />,
+      icon: <MaterialCommunityIcons name="account-multiple-outline" size={20} color={Colors.text} />,
       value: rating.organisasi,
     },
     {
       label: "Worth It",
-      icon: <MaterialIcons name="work" size={16} color="white" />,
+      icon: <MaterialIcons name="work-outline" size={20} color={Colors.text} />,
       value: rating.worthIt,
     },
   ];
@@ -186,7 +190,7 @@ export default function CampusScreen() {
                 <Text
                   style={{
                     color: Colors.text,
-                    fontSize: 24,
+                    fontSize: 30,
                     fontWeight: "bold",
                     marginRight: 8,
                   }}
@@ -220,15 +224,15 @@ export default function CampusScreen() {
                   ([key, value], idx) => {
                     const icon =
                       key === "Fasilitas" ? (
-                        <FontAwesome5 name="building" size={16} color="white" />
+                        <MaterialIcons name="corporate-fare" size={20} color={Colors.text} />
                       ) : key === "Wifi" ? (
-                        <Ionicons name="wifi" size={16} color="white" />
+                        <MaterialIcons name="wifi" size={20} color={Colors.text} />
                       ) : key === "Lokasi" ? (
-                        <Ionicons name="location" size={16} color="white" />
+                        <MaterialCommunityIcons name="map-marker-outline" size={20} color={Colors.text} />
                       ) : key === "Organisasi" ? (
-                        <Ionicons name="people" size={16} color="white" />
+                        <MaterialCommunityIcons name="account-multiple-outline" size={20} color={Colors.text} />
                       ) : key === "Worth It" ? (
-                        <MaterialIcons name="work" size={16} color="white" />
+                        <MaterialIcons name="work-outline" size={20} color={Colors.text} />
                       ) : null;
 
                     return (

@@ -79,7 +79,7 @@ export default function SearchScreen() {
           <TextInput
             placeholder="Universitas atau Dosen"
             placeholderTextColor={Colors.lightGrey}
-            style={{ flex: 1, color: Colors.text, fontSize: 16 }}
+            style={{ flex: 1, color: Colors.text, fontSize: 16, fontWeight: 400 }}
           />
           <Ionicons name="search" size={20} color={Colors.text} />
         </View>
@@ -88,7 +88,7 @@ export default function SearchScreen() {
           style={{
             color: Colors.text,
             fontSize: 18,
-            fontWeight: "600",
+            fontWeight: 500,
             marginTop: 24,
           }}
         >
@@ -121,7 +121,7 @@ export default function SearchScreen() {
               </Text>
             </View>
             <Text
-              style={{ color: Colors.text, fontWeight: "bold", fontSize: 20 }}
+              style={{ color: Colors.text, fontSize: 30 }}
             >
               {lecturer.rating}
             </Text>
@@ -162,7 +162,7 @@ export default function SearchScreen() {
               </Text>
             </View>
             <Text
-              style={{ color: Colors.text, fontWeight: "bold", fontSize: 20 }}
+              style={{ color: Colors.text, fontSize: 30 }}
             >
               {uni.rating}
             </Text>

@@ -84,7 +84,7 @@ export default function ListDosenScreen() {
                 </Text>
               </View>
               <Text
-                style={{ color: "white", fontSize: 24, fontWeight: "bold" }}
+                style={{ color: "white", fontSize: 34, fontWeight: 400 }}
               >
                 {dosen.rating.toFixed(1)}
               </Text>
