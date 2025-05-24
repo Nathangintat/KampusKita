@@ -1,19 +1,20 @@
-import { View, TextInput, Pressable, StyleSheet } from "react-native";
+import { View, TextInput, Pressable, StyleSheet, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 
 export default {};
 
 interface Props {
+    style?: ViewStyle;
     placeholder?: string;
     onPress: () => void;
     value: string;
     onChangeText: (text: string) => void;
 }
 
-export function SearchBox({ placeholder, onPress, value, onChangeText }: Props) {
+export function SearchBox({ style, placeholder, onPress, value, onChangeText }: Props) {
     return (
-        <View style={styles.searchBox}>
+        <View style={{...styles.searchBox, ...style}}>
             <TextInput
                 placeholder={placeholder ? placeholder : "Universitas atau Dosen"}
                 placeholderTextColor={Colors.lightGrey}
