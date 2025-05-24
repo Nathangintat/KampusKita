@@ -5,8 +5,6 @@ import { Subtitle } from "@/components/Subtitle";
 import { Title } from "@/components/Title";
 import { TotalRating } from "@/components/TotalRating";
 import { Colors } from "@/constants/Colors";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 

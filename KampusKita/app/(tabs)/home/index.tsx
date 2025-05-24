@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useRouter } from "expo-router";
 import { ScrollView, Text, TextInput, View, Pressable, StyleSheet } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomText } from "./components/CustomText";
 import { EmphText } from "./components/EmphText";
+import { SearchBox } from "./components/SearchBox";
 import { ListItem } from "./components/ListItem";
 import { 
     TopLecturerItem, 
@@ -14,21 +16,32 @@ import {
 } from "./types";
 
 export default function HomeScreen() {
+    const router = useRouter();
+
     const [username, setUsername] = useState<string>("Username");
     const [topDosen, setTopDosen] = useState<TopLecturerItem[]>(topLecturers);
     const [topKampus, setTopKampus] = useState<TopUniversityItem[]>(topUniversities);
 
+    const [search, setSearch] = useState<string>("");
+
     function handlePressDosen(id: number) {
         console.log(`handlePressDosen(${id})`);
+        router.navigate("/(tabs)/dosen");
     }
 
     function handlePressKampus(id: number) {
         console.log(`handlePressKampus(${id})`);
+        router.navigate("/(tabs)/campus");
+    }
+
+    function handleSearch() {
+        if (!search) return;
+        console.log(`handleSearch(${search})`);
+        router.navigate(`/(tabs)/search/${search}`);
     }
 
     return (
       <SafeAreaView
-        edges={["top", "left", "right"]}
         style={{
           backgroundColor: Colors.background1,
           flex: 1,
@@ -43,7 +56,7 @@ export default function HomeScreen() {
                 <Pressable android_ripple={{
                     color: "rgba(0,0,0,0.3)",
                     borderless: true,
-                }}>
+                }} onPress={() => router.navigate("/settings")}>
                     <Ionicons name="settings-outline" size={24} color={Colors.text} />
                 </Pressable>
               </View>
@@ -52,20 +65,11 @@ export default function HomeScreen() {
               <Text style={styles.searchTitle}>Cari nama Universitas dan Dosen anda</Text>
 
               {/* Search Box */}
-              <View style={styles.searchBox}>
-                <TextInput
-                  placeholder="Universitas atau Dosen"
-                  placeholderTextColor={Colors.lightGrey}
-                  style={styles.searchTextBox}
-                />
-                <Pressable style={{ padding: 3 }} android_ripple={{
-                    color: "rgba(0,0,0,0.3)",
-                    borderless: true,
-                    foreground: true,
-                }}>
-                    <Ionicons name="search" size={20} color={Colors.text} />
-                </Pressable>
-              </View>
+              <SearchBox
+                value={search}
+                onChangeText={(text: string) => setSearch(text)}
+                onPress={handleSearch}
+              />
 
               {/* Dosen Terbaik */}
               <View style={styles.rankingContainer}>
@@ -122,12 +126,14 @@ const styles = StyleSheet.create({
     },
     searchBox: {
         backgroundColor: Colors.background2,
-        borderRadius: 10,
+        borderRadius: 16,
         paddingHorizontal: 16,
         paddingVertical: 8,
         marginTop: 10,
         flexDirection: "row",
         alignItems: "center",
+        borderWidth: 1, 
+        borderColor: Colors.grey
     },
     searchTextBox: { 
         flex: 1, 

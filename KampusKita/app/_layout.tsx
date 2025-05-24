@@ -32,6 +32,10 @@ export default function RootLayout() {
                 headerShown: false,
             }}>
                 <Stack.Screen name="(tabs)/home/index"/>
+                <Stack.Screen name="(tabs)/campus/index"/>
+                <Stack.Screen name="(tabs)/search/[search]"/>
+                <Stack.Screen name="(tabs)/settings"/>
+                <Stack.Screen name="(tabs)/dosen"/>
                 {/*<Stack.Screen name="+not-found" />*/}
             </Stack>
             <StatusBar style="auto" />

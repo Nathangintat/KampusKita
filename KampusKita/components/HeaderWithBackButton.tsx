@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from "expo-router";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Colors } from '@/constants/Colors';
 
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function HeaderWithBackButton({ children }: Props) {
+    const router = useRouter();
   return (
         <View style={styles.headerContainer}>
             <Pressable 
@@ -16,7 +18,7 @@ export function HeaderWithBackButton({ children }: Props) {
                     borderless: true,
                 }}
                 style={{ padding: 3 }}
-                onPress={() => console.log("back")}
+                onPress={() => router.back()}
             >
                 <Ionicons name="chevron-back-sharp" size={24} color={Colors.text} />
             </Pressable>
