@@ -11,6 +11,10 @@ type ReviewDosen struct {
 	Rating    int       `gorm:"rating"`
 	CreatedAt time.Time `gorm:"created_at"`
 
-	User  User  `gorm:"foreignKey:UserId;"`
+	User  User  `gorm:"foreignKey:UserID;references:ID"`
 	Dosen Dosen `gorm:"foreignKey:DosenID;"`
+}
+
+func (ReviewDosen) TableName() string {
+	return "review_dosen"
 }

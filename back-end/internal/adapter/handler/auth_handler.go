@@ -25,7 +25,6 @@ type authHandler struct {
 	authService service.AuthService
 }
 
-// Login implements AuthHandler.
 func (a *authHandler) Login(c *fiber.Ctx) error {
 	req := request.LoginRequest{}
 	resp := response.SuccessAuthResponse{}
@@ -49,18 +48,18 @@ func (a *authHandler) Login(c *fiber.Ctx) error {
 	}
 
 	reqLogin := entity.LoginRequest{
-		Email:    req.Email,
-		Password: req.Password,
+		GoogleIdToken: req.GoogleIdToken,
 	}
 
-	result, err := a.authService.GetUserByEmail(c.Context(), reqLogin)
+	payload, err := a.authService.LoginWithGoogle(c.Context(), reqLogin)
+	result, err := a.authService.GetUserByEmail(c.Context(), payload)
 	if err != nil {
 		code = "[HANDLER] Login - 3"
 		log.Errorw(code, err)
 		errorResp.Meta.Status = false
 		errorResp.Meta.Message = err.Error()
 
-		if err.Error() == "invalid password" {
+		if err.Error() == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(errorResp)
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(errorResp)

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/ThePlatypus-Person/KampusKita/internal/core/domain/entity"
 	"github.com/ThePlatypus-Person/KampusKita/internal/core/domain/model"
 
@@ -13,18 +14,33 @@ var err error
 var code string
 
 type AuthRepository interface {
-	GetUserByEmail(ctx context.Context, req entity.LoginRequest) (*entity.UserEntity, error)
+	GetUserByEmail(ctx context.Context, req entity.LoginGmail) (*entity.UserEntity, error)
+	CreateNewUser(ctx context.Context, req entity.UserEntity) error
 }
 
 type authRepository struct {
 	db *gorm.DB
 }
 
-// GetUserByEmail implements AuthRepository.
-func (a *authRepository) GetUserByEmail(ctx context.Context, req entity.LoginRequest) (*entity.UserEntity, error) {
+func (a *authRepository) CreateNewUser(ctx context.Context, req entity.UserEntity) error {
+
+	user := model.User{
+		Email:    req.Email,
+		Username: req.Username,
+		VerifyID: req.VerifyId,
+	}
+
+	err := a.db.WithContext(ctx).Create(&user).Error
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (a *authRepository) GetUserByEmail(ctx context.Context, req entity.LoginGmail) (*entity.UserEntity, error) {
 	var modelUser model.User
 
-	err = a.db.Where("email = ?", req.GoogleIdToken).First(&modelUser).Error
+	err = a.db.Where("email = ?", req.Email).First(&modelUser).Error
 	if err != nil {
 		code = "[REPOSITORY] GetUserByEmail - 1"
 		log.Errorw(code, err)

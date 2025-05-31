@@ -1,6 +1,6 @@
 package entity
 
-type Kampus struct {
+type KampusEntity struct {
 	ID          int64
 	Nama        string
 	NamaSingkat string

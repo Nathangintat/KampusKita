@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type Postgres struct {
@@ -21,7 +22,9 @@ func (cfg Config) ConnectionPostgres() (*Postgres, error) {
 		cfg.Psql.Port,
 		cfg.Psql.DBName)
 
-	db, err := gorm.Open(postgres.Open(dbConnString), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dbConnString), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		log.Error().Err(err).Msg("[ConnectionPostgres-1] Failed to connect to database " + cfg.Psql.Host)
 		return nil, err

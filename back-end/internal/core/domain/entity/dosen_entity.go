@@ -1,7 +1,25 @@
 package entity
 
-type Dosen struct {
-	ID      int64
+type DosenEntity struct {
+	ID     uint
+	Nama   string
+	KpId   uint
+	Rating float64
+	Prodi  string
+	Kampus string
+}
+
+type DosenItemEntity struct {
+	DosenId uint
+	Rating  float64
 	Nama    string
-	KPMapID *int64 // nullable, foreign key ke KampusProdiMap
+	Prodi   string
+}
+
+type SearchDosenEntity struct {
+	DosenId uint
+	Rating  float64
+	Nama    string
+	Prodi   string
+	Kampus  string
 }

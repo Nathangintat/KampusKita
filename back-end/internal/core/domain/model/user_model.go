@@ -5,5 +5,5 @@ type User struct {
 	Username string  `gorm:"username"`
 	Email    string  `gorm:"email"`
 	VerifyID *string `gorm:"verify_id"`
-	Verify   *Verify `gorm:"foreignKey:VerifyID;references:NIM"`
+	Verify   *Verify `gorm:"foreignKey:VerifyID; references:Nim"`
 }

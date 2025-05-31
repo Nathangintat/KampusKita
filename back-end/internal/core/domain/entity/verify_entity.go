@@ -1,9 +1,8 @@
 package entity
 
-type Verify struct {
-	NIM        string
+type VerifyEntity struct {
+	Nim        string
 	Kampus     string
-	Fakultas   string
+	Prodi      string
 	IsVerified bool
-	// KTM image disimpan di filesystem, path bisa disimpan di service layer
 }

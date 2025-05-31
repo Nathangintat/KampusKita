@@ -2,19 +2,30 @@ package entity
 
 import "time"
 
-type ReviewKampus struct {
+type ReviewKampusEntity struct {
 	ID              int64
 	UserID          int64
-	KPMapID         *int64 // nullable
+	KPMapID         int64
 	Content         string
-	RatingFasilitas int // 1-5
-	RatingInternet  int // 1-5
-	RatingLokasi    int // 1-5
-	RatingOrmawa    int // 1-5
-	RatingWorthIt   int // 1-5
+	RatingFasilitas int
+	RatingInternet  int
+	RatingLokasi    int
+	RatingOrmawa    int
+	RatingWorthIt   int
 	CreatedAt       time.Time
-	LikeCount       int
-	DislikeCount    int
+}
+
+type ReviewKampusItemEntity struct {
+	ReviewID        int64
+	Date            time.Time
+	Content         string
+	Like            int
+	Dislike         int
 	HasLiked        bool
 	HasDisliked     bool
+	RatingFasilitas int
+	RatingInternet  int
+	RatingLokasi    int
+	RatingOrmawa    int
+	RatingWorthIt   int
 }

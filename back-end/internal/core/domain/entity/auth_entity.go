@@ -4,11 +4,15 @@ type LoginRequest struct {
 	GoogleIdToken string
 }
 
+type LoginGmail struct {
+	Email string
+}
+
 type ChangeUsernameRequest struct {
 	NewUsername string
 }
 
 type AccessToken struct {
-	Token     string
-	ExpiresAt int64
+	AccessToken string
+	ExpiresAt   int64
 }
