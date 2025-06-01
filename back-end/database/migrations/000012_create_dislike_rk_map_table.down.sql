@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS dislike_rk_map;

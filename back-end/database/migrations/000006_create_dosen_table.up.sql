@@ -1,0 +1,7 @@
+-- dosen
+CREATE TABLE IF NOT EXISTS dosen (
+    id SERIAL PRIMARY KEY,
+    nama VARCHAR(50) UNIQUE NOT NULL,
+    kp_id INTEGER,
+    FOREIGN KEY (kp_id) REFERENCES kp_map(id) ON DELETE SET NULL
+);
