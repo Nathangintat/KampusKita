@@ -31,6 +31,7 @@ export default function RootLayout() {
                 contentStyle: { backgroundColor: Colors.background3 },
                 headerShown: false,
             }}>
+                <Stack.Screen name="(tabs)/login"/>
                 <Stack.Screen name="(tabs)/home/index"/>
                 <Stack.Screen name="(tabs)/campus/[kampusId]"/>
                 <Stack.Screen name="(tabs)/search/[search]"/>

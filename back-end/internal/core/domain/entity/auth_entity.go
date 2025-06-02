@@ -15,4 +15,5 @@ type ChangeUsernameRequest struct {
 type AccessToken struct {
 	AccessToken string
 	ExpiresAt   int64
+	Username 	string
 }

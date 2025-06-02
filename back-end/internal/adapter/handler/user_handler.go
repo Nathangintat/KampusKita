@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"fmt"
-
 	"github.com/ThePlatypus-Person/KampusKita/internal/adapter/handler/request"
 	"github.com/ThePlatypus-Person/KampusKita/internal/adapter/handler/response"
 	"github.com/ThePlatypus-Person/KampusKita/internal/core/domain/entity"
@@ -82,11 +80,10 @@ func (u *usertHandler) ChangeUsername(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(errorResp)
 	}
 
-	fmt.Println(token)
-
 	resp.Meta.Status = true
 	resp.Meta.Message = "Change Username success"
 	resp.AccessToken = token.AccessToken
+	resp.Username = req.NewUsername
 	resp.ExpiresAt = token.ExpiresAt
 
 	return c.JSON(resp)

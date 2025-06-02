@@ -83,6 +83,7 @@ func (a *authService) GetUserByEmail(ctx context.Context, req entity.LoginGmail)
 	resp := entity.AccessToken{
 		AccessToken: accessToken,
 		ExpiresAt:   expiresAt,
+		Username: result.Username,
 	}
 
 	return &resp, nil

@@ -69,6 +69,7 @@ func (a *authHandler) Login(c *fiber.Ctx) error {
 	resp.Meta.Message = "Login successful"
 	resp.AccessToken = result.AccessToken
 	resp.ExpiresAt = result.ExpiresAt
+	resp.Username = result.Username
 
 	return c.JSON(resp)
 }

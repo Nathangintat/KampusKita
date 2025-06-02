@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { ScrollView, Text, View, Pressable, StyleSheet } from "react-native";
+import { ScrollView, Text, View, Pressable, Modal, StyleSheet } from "react-native";
+import * as SecureStore from 'expo-secure-store';
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,6 +9,7 @@ import { CustomText } from "./components/CustomText";
 import { EmphText } from "./components/EmphText";
 import { SearchBox } from "./components/SearchBox";
 import { ListItem } from "./components/ListItem";
+import { AddUsernameModal } from "./components/AddUsernameModal";
 import { 
     TopDosenFetchType,
     TopDosenType, 
@@ -23,6 +25,7 @@ export default function HomeScreen() {
     const [topDosen, setTopDosen] = useState<TopDosenType[]>([]);
     const [topKampus, setTopKampus] = useState<TopKampusType[]>([]);
     const [search, setSearch] = useState<string>("");
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
 
     function handlePressDosen(id: number) {
         console.log(`handlePressDosen(${id})`);
@@ -85,12 +88,23 @@ export default function HomeScreen() {
         }
     }, []);
 
+    async function loadUsername() {
+        const username = await SecureStore.getItemAsync('username');
+        if (username && username !== "") {
+            setUsername(username);
+            return;
+        }
+
+        setModalVisible(true);
+    }
+
 
     // adb reverse tcp:3000 tcp:3000
     // Fetch here
     // Store JWT:
     // https://docs.expo.dev/versions/latest/sdk/securestore/
     useEffect(() => {
+        loadUsername();
         fetchTopDosen();
         fetchTopKampus();
         setUsername("Username");
@@ -157,6 +171,15 @@ export default function HomeScreen() {
               </View>
             </View>
         </ScrollView>
+
+        <AddUsernameModal 
+            visible={modalVisible} 
+            handleClose={(newUsername: string) => {
+                setUsername(newUsername);
+                setModalVisible(false);
+            }} 
+        />
+
       </SafeAreaView>
     );
 }
