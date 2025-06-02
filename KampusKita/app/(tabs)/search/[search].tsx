@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { ScrollView, Text, FlatList, View, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -9,10 +9,10 @@ import { HeaderWithBackButton } from "@/components/HeaderWithBackButton";
 import { SearchBox } from "../home/components/SearchBox";
 import { Colors } from "@/constants/Colors";
 import { 
+    SearchDosenFetchType,
     SearchDosenType,
+    SearchKampusFetchType,
     SearchKampusType,
-    searchDosenDummy,
-    searchKampusDummy,
 } from "./types";
 
 export default function SearchScreen() {
@@ -35,15 +35,61 @@ export default function SearchScreen() {
     function handleSearch() {
         console.log(`handleSearch(${search})`);
 
-        // fetch again here
+        fetchSearchDosen(search);
+        fetchSearchKampus(search);
     }
+
+    const fetchSearchDosen = useCallback(async (keyword: string) => {
+        try {
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/dosen/search?q=${keyword}`;
+            const res = await fetch(url);
+            if (!res.ok) return;
+
+            const json: SearchDosenFetchType = await res.json();
+            const data: SearchDosenType[] = json.data.map(item => {
+                return {
+                    id: item.dosenId,
+                    nama: item.nama,
+                    kampus: item.kampus,
+                    prodi: item.prodi,
+                    rating: item.rating,
+                };
+            });
+            setDosen(data);
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+    const fetchSearchKampus = useCallback(async (keyword: string) => {
+        try {
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/kampus/search?q=${keyword}`;
+            const res = await fetch(url);
+            if (!res.ok) return;
+
+            const json: SearchKampusFetchType[] = await res.json();
+            const data: SearchKampusType[] = json.data.map(item => {
+                return {
+                    id: item.kampusId,
+                    nama: item.nama,
+                    namaPendek: item.nama_singkat,
+                    rating: item.rating,
+                }
+            });
+            setKampus(data);
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+
+
 
     useEffect(() => {
         setSearch(local.search);
 
-        // fetch here
-        setDosen(searchDosenDummy);
-        setKampus(searchKampusDummy);
+        fetchSearchDosen(local.search);
+        fetchSearchKampus(local.search);
     }, []);
 
     return (
@@ -78,6 +124,7 @@ export default function SearchScreen() {
                     <FlatList
                         scrollEnabled={false}
                         data={dosen}
+                        style={{ marginBottom: 20 }}
                         renderItem={({item, index}) => (
                             <View key={index} style={styles.viewContainer}>
                                 <Pressable style={styles.container} android_ripple={{
@@ -102,10 +149,11 @@ export default function SearchScreen() {
                     marginHorizontal: 28,
                 }}>
                     {/* Universitas Ditemukan */}
-                    <Text style={styles.subtitle}>{dosen.length} Universitas Ditemukan</Text>
+                    <Text style={styles.subtitle}>{kampus.length} Universitas Ditemukan</Text>
                     <FlatList
                         scrollEnabled={false}
                         data={kampus}
+                        style={{ marginBottom: 20 }}
                         renderItem={({item, index}) => (
                             <View key={index} style={styles.viewContainer}>
                                 <Pressable style={styles.container} android_ripple={{
@@ -114,7 +162,7 @@ export default function SearchScreen() {
                                 }} onPress={() => router.navigate(`/(tabs)/campus/${item.id}`)}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.topText}>{item.nama}</Text>
-                                        <Text style={styles.bottomText}>Program Studi {item.namaPendek}</Text>
+                                        <Text style={styles.bottomText}>{item.namaPendek}</Text>
                                     </View>
                                     <Text style={styles.rating}>{item.rating}</Text>
                                     <View style={{ height: 40 }}/>

@@ -8,11 +8,30 @@ export type SearchDosenType = {
     rating: number;
 };
 
+export type SearchDosenFetchType = {
+    data: {
+        dosenId: number;
+        nama: string;
+        kampus: string;
+        prodi: string;
+        rating: number;
+    }[];
+}
+
 export type SearchKampusType = {
     id: number;
     nama: string;
     namaPendek: string;
     rating: number;
+}
+
+export type SearchKampusFetchType = {
+    data: {
+        kampusId: number;
+        nama: string;
+        nama_singkat: string;
+        rating: number;
+    }[];
 }
 
 export const searchDosenDummy: SearchDosenType[] = [

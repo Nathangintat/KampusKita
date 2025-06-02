@@ -6,6 +6,17 @@ export type DosenType = SearchDosenType & {
     kampusId: number;
 }
 
+export type DosenFetchType = {
+    data: {
+        id: number;
+        kampus: string;
+        kampus_id: number;
+        nama: string;
+        prodi: string;
+        rating: number;
+    };
+}
+
 export const dosenDummy: DosenType = {
     id: 1,
     kampusId: 1,

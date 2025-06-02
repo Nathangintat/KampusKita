@@ -5,22 +5,45 @@ import { useLocalSearchParams } from "expo-router";
 import { HeaderWithBackButton } from "@/components/HeaderWithBackButton";
 import { Title } from "@/components/Title";
 import { Colors } from "@/constants/Colors";
-import { useEffect, useState } from "react";
-import { SearchDosenType } from "../search/types";
-import { kampusNameDummy, dosenListDummy } from "./type";
+import { useCallback, useEffect, useState } from "react";
+import { SearchDosenFetchType, SearchDosenType } from "../search/types";
+import { kampusNameDummy, dosenListDummy, DosenListFetchType, DosenListItemType } from "./type";
 import { DosenListItem } from "./components/DosenListItem";
 
 export default function ListDosenScreen() {
     const local = useLocalSearchParams();
 
     const [kampusName, setKampusName] = useState<string | null>(null);
-    const [listDosen, setListDosen] = useState<SearchDosenType[] | null>(null);
+    const [listDosen, setListDosen] = useState<DosenListItemType[]>([]);
+
+    const fetchListDosen = useCallback(async (kampusId: number) => {
+        try {
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/kampus/${kampusId}/dosen`;
+            const res = await fetch(url);
+            if (!res.ok) return;
+
+            const json: DosenListFetchType = await res.json();
+            const data: DosenListItemType[] = json.data.map(item => {
+                return {
+                    id: item.dosenId,
+                    nama: item.nama,
+                    prodi: item.prodi,
+                    rating: item.rating,
+                };
+            });
+            setListDosen(data);
+            /*
+            setKampusName(data[0].kampus);
+            */
+
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
 
     useEffect(() => {
-        // local.kampusId
-
-        setKampusName(kampusNameDummy);
-        setListDosen(dosenListDummy);
+        fetchListDosen(local.id);
+        setKampusName(local.name);
     }, []);
 
     return (

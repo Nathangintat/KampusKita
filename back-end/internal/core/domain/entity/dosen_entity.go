@@ -1,12 +1,12 @@
 package entity
 
 type DosenEntity struct {
-	ID     uint
-	Nama   string
-	KpId   uint
-	Rating float64
-	Prodi  string
-	Kampus string
+	ID     		uint
+	Nama   		string
+	KampusId   	uint
+	Rating 		float64
+	Prodi  		string
+	Kampus 		string
 }
 
 type DosenItemEntity struct {

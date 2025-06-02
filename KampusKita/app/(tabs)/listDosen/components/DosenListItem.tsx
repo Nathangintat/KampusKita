@@ -8,6 +8,9 @@ interface Props {
     item: SearchDosenType;
 }
 
+const MAX_NAMA_LENGTH = 30;
+const MAX_PRODI_LENGTH = 20;
+
 export function DosenListItem({ item }: Props) {
     return (
         <View style={{
@@ -22,10 +25,16 @@ export function DosenListItem({ item }: Props) {
         }}>
             <View>
                 <Text style={{ color: Colors.text, fontSize: 16, fontWeight: "bold" }}>
-                {item.nama}
+                { item.nama.length > MAX_NAMA_LENGTH ? 
+                    (item.nama.substring(0, MAX_NAMA_LENGTH-3) + "...")
+                        : item.nama
+                }
                 </Text>
                 <Text style={{ color: Colors.text, fontSize: 14 }}>
-                Program Studi {item.prodi}
+                { item.prodi.length > MAX_PRODI_LENGTH ? 
+                    ("Program Studi " + item.prodi.substring(0, MAX_PRODI_LENGTH-3) + "...")
+                        : "Program Studi " + item.prodi
+                }
                 </Text>
             </View>
 

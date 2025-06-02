@@ -45,12 +45,12 @@ func (dh *dosenHandler) GetDosenByID(c *fiber.Ctx) error {
 	defaultSuccessResponse.Meta.Message = "Success"
 
 	respDosen := response.DosenResponse{
-		ID:     results.ID,
-		Nama:   results.Nama,
-		KpId:   results.KpId,
-		Rating: results.Rating,
-		Prodi:  results.Prodi,
-		Kampus: results.Kampus,
+		ID:     	results.ID,
+		Nama:   	results.Nama,
+		KampusId:   results.KampusId,
+		Rating: 	results.Rating,
+		Prodi:  	results.Prodi,
+		Kampus: 	results.Kampus,
 	}
 
 	defaultSuccessResponse.Data = respDosen

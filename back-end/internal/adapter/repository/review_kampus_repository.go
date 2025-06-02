@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/ThePlatypus-Person/KampusKita/internal/core/domain/entity"
 	"github.com/ThePlatypus-Person/KampusKita/internal/core/domain/model"
@@ -39,8 +38,6 @@ func (rk *reviewKampusRepository) GetReviewKampusByID(ctx context.Context, kampu
 		Where("kp_id = ?", kampusID).
 		Order("created_at DESC").
 		Scan(&results).Error
-
-	fmt.Println(results)
 
 	if err != nil {
 		code = "[REPOSITORY] GetReviewKampusByID - 1"

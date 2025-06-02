@@ -6,3 +6,8 @@ type Kampus struct {
 	NamaSingkat string `gorm:"nama_singkat"`
 	Akreditasi  string `gorm:"akreditasi"`
 }
+
+type KampusComplete struct {
+	Kampus
+	JumlahDosen uint
+}

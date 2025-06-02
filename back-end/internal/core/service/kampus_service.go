@@ -34,6 +34,10 @@ func (k *kampusService) SearchKampus(ctx context.Context, keyword string) ([]ent
 		return nil, nil, err
 	}
 
+	if (len(results) < 1) {
+		return results, nil, nil
+	}
+
 	ratingResult, err := k.reviewRepo.GetRatingKampusByID(ctx, results[0].ID)
 	if err != nil {
 		code = "[SERVICE] SearchKampus - 2"

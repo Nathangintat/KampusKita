@@ -5,4 +5,5 @@ type KampusEntity struct {
 	Nama        string
 	NamaSingkat string
 	Akreditasi  string
+	JumlahDosen int64
 }

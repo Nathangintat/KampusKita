@@ -3,7 +3,7 @@ package response
 type DosenResponse struct {
 	ID     uint    `json:"id"`
 	Nama   string  `json:"nama"`
-	KpId   uint    `json:"kp_id"`
+	KampusId  uint    `json:"kampus_id"`
 	Rating float64 `json:"rating"`
 	Prodi  string  `json:"prodi"`
 	Kampus string  `json:"kampus"`

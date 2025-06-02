@@ -17,6 +17,7 @@ type KampusRepository interface {
 	GetDosenByKampusID(ctx context.Context, id int64) ([]entity.DosenItemEntity, error)
 	GetTopFasilitasKampus(ctx context.Context) ([]entity.RankingKampusEntity, error)
 }
+
 type kampusRepository struct {
 	db *gorm.DB
 }
@@ -35,6 +36,7 @@ func (k *kampusRepository) SearchKampus(ctx context.Context, keyword string) ([]
 	}
 
 	resps := []entity.KampusEntity{}
+
 	for _, val := range modelKampus {
 		resp := entity.KampusEntity{
 			ID:          int64(val.ID),
@@ -72,9 +74,22 @@ func (k *kampusRepository) GetKampus(ctx context.Context) ([]entity.KampusEntity
 }
 
 func (k *kampusRepository) GetKampusByID(ctx context.Context, id int64) (*entity.KampusEntity, error) {
-	var modelKampus model.Kampus
+	var modelKampus model.KampusComplete
 
-	err = k.db.Where("id = ?", id).Preload(clause.Associations).First(&modelKampus).Error
+	err := k.db.Table("kampus").
+		Select(`
+			kampus.id,
+			kampus.nama,
+			kampus.akreditasi,
+			COUNT(dosen.id) AS jumlah_dosen
+    	`).
+		Joins("JOIN kp_map ON kp_map.kampus_id = kampus.id").
+		Joins("JOIN dosen ON dosen.kp_id = kp_map.id").
+		Where("kp_map.kampus_id = ?", id).
+		Group("kampus.id").
+		Limit(1).
+		Scan(&modelKampus).Error
+
 	if err != nil {
 		code = "[REPOSITORY] GetKampusById - 1"
 		log.Errorw(code, err)
@@ -85,6 +100,7 @@ func (k *kampusRepository) GetKampusByID(ctx context.Context, id int64) (*entity
 		ID:         int64(modelKampus.ID),
 		Nama:       modelKampus.Nama,
 		Akreditasi: modelKampus.Akreditasi,
+		JumlahDosen: int64(modelKampus.JumlahDosen),
 	}
 
 	return &resp, nil
@@ -134,17 +150,18 @@ func (k *kampusRepository) GetDosenByKampusID(ctx context.Context, kampusId int6
 func (k *kampusRepository) GetTopFasilitasKampus(ctx context.Context) ([]entity.RankingKampusEntity, error) {
 	rankingList := []entity.RankingKampusEntity{}
 
-	err := k.db.Table("review_kampus").
+	err := k.db.Table("kampus").
 		Select(`
         kampus.id AS kampus_id,
         kampus.nama,
         kampus.nama_singkat,
-        AVG(rating_fasilitas) AS total
+        AVG(review_kampus.rating_fasilitas) AS total
     	`).
-		Joins("JOIN kp_map ON kp_map.id = review_kampus.kp_id").
-		Joins("JOIN kampus ON kampus.id = kp_map.kampus_id").
+		Joins("LEFT JOIN kp_map ON kp_map.id = kampus.id").
+		Joins("LEFT JOIN review_kampus ON review_kampus.kp_id = kp_map.id").
 		Group("kampus.id, kampus.nama, kampus.nama_singkat").
-		Order("total DESC").
+		Order("total DESC, kampus.nama ASC").
+		Limit(5).
 		Scan(&rankingList).Error
 
 	if err != nil {

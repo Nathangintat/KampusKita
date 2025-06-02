@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router";
 import { ScrollView, Text, View, Pressable, StyleSheet } from "react-native";
 import { Colors } from "@/constants/Colors";
@@ -9,10 +9,10 @@ import { EmphText } from "./components/EmphText";
 import { SearchBox } from "./components/SearchBox";
 import { ListItem } from "./components/ListItem";
 import { 
+    TopDosenFetchType,
     TopDosenType, 
+    TopKampusFetchType, 
     TopKampusType, 
-    topDosenDummy,
-    topKampusDummy,
 } from "./types";
 
 
@@ -42,15 +42,58 @@ export default function HomeScreen() {
         setSearch("");
     }
 
-    useEffect(() => {
-        // Fetch here
+    const fetchTopDosen = useCallback(async () => {
+        try { 
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/dosen/top`;
+            const res = await fetch(url);
+            if (!res.ok) return;
 
-        // Store JWT:
-        // https://docs.expo.dev/versions/latest/sdk/securestore/
- 
+            const json: TopDosenFetchType = await res.json();
+            const data: TopDosenType[] = json.data.map(item => {
+                return {
+                    id: item.dosenId,
+                    rank: item.ranking,
+                    nama: item.nama,
+                    kampus: item.kampus,
+                }
+            });
+            setTopDosen(data);
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+
+    const fetchTopKampus = useCallback(async () => {
+        try {
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/kampus/top/fasilitas`;
+            const res = await fetch(url);
+            if (!res.ok) return;
+
+            const json: TopKampusFetchType = await res.json();
+            const data: TopKampusType[] = json.data.map(item => {
+                return {
+                    id: item.kampus_id,
+                    rank: item.ranking,
+                    nama: item.nama,
+                    namaPendek: item.nama_singkat,
+                };
+            });
+            setTopKampus(data);
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+
+    // adb reverse tcp:3000 tcp:3000
+    // Fetch here
+    // Store JWT:
+    // https://docs.expo.dev/versions/latest/sdk/securestore/
+    useEffect(() => {
+        fetchTopDosen();
+        fetchTopKampus();
         setUsername("Username");
-        setTopDosen(topDosenDummy);
-        setTopKampus(topKampusDummy);
     }, []);
 
     return (

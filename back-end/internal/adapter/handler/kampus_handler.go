@@ -84,6 +84,7 @@ func (kh *kampusHandler) GetKampusByID(c *fiber.Ctx) error {
 		KampusID:   result.ID,
 		Nama:       result.Nama,
 		Akreditasi: result.Akreditasi,
+		JumlahDosen: result.JumlahDosen,
 		Rating: &response.RatingKampusResponse{
 			Fasilitas:  ratingResult.Fasilitas,
 			Wifi:       ratingResult.Wifi,
@@ -127,10 +128,8 @@ func (kh *kampusHandler) SearchKampus(c *fiber.Ctx) error {
 	for _, kampus := range results {
 		respKampusSearch := response.SearchKampusItemResponse{
 			KampusID: kampus.ID,
-			Nama:     kampus.Nama,
-			Rating: &response.RatingKampusResponse{
-				Total: ratingResult.Total,
-			},
+			Nama: kampus.Nama,
+			Rating: ratingResult.Total,
 			NamaSingkat: kampus.NamaSingkat,
 		}
 

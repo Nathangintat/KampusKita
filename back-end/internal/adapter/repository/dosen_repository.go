@@ -47,12 +47,12 @@ func (d *dosenRepository) GetDosenByID(ctx context.Context, dosenId int64) (*ent
 	}
 
 	response := entity.DosenEntity{
-		ID:     dosen.ID,
-		Nama:   dosen.Nama,
-		KpId:   dosen.KPMap.Kampus.ID,
-		Rating: avgRating,
-		Prodi:  dosen.KPMap.Prodi.Nama,
-		Kampus: dosen.KPMap.Kampus.Nama,
+		ID:     	dosen.ID,
+		Nama:   	dosen.Nama,
+		KampusId:   dosen.KPMap.Kampus.ID,
+		Rating: 	avgRating,
+		Prodi:  	dosen.KPMap.Prodi.Nama,
+		Kampus: 	dosen.KPMap.Kampus.Nama,
 	}
 
 	return &response, nil
@@ -117,6 +117,7 @@ func (d *dosenRepository) GetTopDosen(ctx context.Context) ([]entity.RankingDose
 		Joins(`LEFT JOIN review_dosen AS rd ON rd.dosen_id = dosen.id`).
 		Group("dosen.id, dosen.nama, k.nama").
 		Order("rating DESC").
+		Limit(5).
 		Scan(&rankingList).Error
 
 	if err != nil {

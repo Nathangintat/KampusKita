@@ -24,6 +24,16 @@ export type KampusDataType = {
     rating: KampusRatingType;
 }
 
+export type KampusFetchType = {
+    data: {
+        akreditasi: string;
+        kampusId: number;
+        nama: string;
+        rating: KampusRatingType;
+        jumlah_dosen: number;
+    };
+}
+
 export const kampusDataDummy: KampusDataType = {
     id: 1,
     jumlahDosen: 80,

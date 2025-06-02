@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Link, useLocalSearchParams } from "expo-router";
@@ -10,7 +10,7 @@ import { Subtitle } from '@/components/Subtitle';
 import { TotalRating } from '@/components/TotalRating';
 import { ReviewHeader } from '@/components/ReviewHeader';
 import { ReviewDosenList } from './components/ReviewDosenList';
-import { dosenDummy, dosenReviewDummy, DosenReviewType, DosenType } from './type';
+import { DosenFetchType, dosenReviewDummy, DosenReviewType, DosenType } from './type';
 
 export default function DosenScreen() {
     const local = useLocalSearchParams();
@@ -19,10 +19,29 @@ export default function DosenScreen() {
     const [dosen, setDosen] = useState<DosenType | null>(null);
     const [reviewList, setReviewList] = useState<DosenReviewType[] | null>(null);
 
-    useEffect(() => {
-        // local.dosenId
+    const fetchDosen = useCallback(async (dosenId: number) => {
+        try {
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/dosen/${dosenId}`;
+            const res = await fetch(url);
+            if (!res.ok) return;
 
-        setDosen(dosenDummy);
+            const json: DosenFetchType = await res.json();
+            const data: DosenType = {
+                id: json.data.id,
+                kampusId: json.data.kampus_id,
+                kampus: json.data.kampus,
+                rating: json.data.rating,
+                nama: json.data.nama,
+                prodi: json.data.prodi,
+            };
+            setDosen(data);
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchDosen(local.dosenId);
         setReviewList(dosenReviewDummy);
     }, []);
 
@@ -39,8 +58,8 @@ export default function DosenScreen() {
         <ScrollView>
             <View style={{ paddingHorizontal: 28 }}>
                 <View>
-                    <Title>Ocean Charlie Gunawan</Title>
-                    <Subtitle>Dosen Prodi {dosen.prodi},</Subtitle>
+                    <Title>{ dosen.nama }</Title>
+                    <Subtitle>Dosen Prodi {dosen.prodi}</Subtitle>
                     <Link href={`/(tabs)/campus/${dosen.kampusId}`}>
                         <Subtitle style={{
                             color: Colors.primary,

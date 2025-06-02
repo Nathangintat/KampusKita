@@ -1,10 +1,28 @@
 export default {};
 
+export type TopDosenFetchType = {
+    data: {
+        dosenId: number;
+        kampus: string;
+        nama: string;
+        ranking: number;
+    }[];
+}
+
 export type TopDosenType = {
     id: number;
     rank: number;
     nama: string;
     kampus: string;
+}
+
+export type TopKampusFetchType = {
+    data: {
+        kampus_id: number;
+        ranking: number;
+        nama: string;
+        nama_singkat: string;
+    }[];
 }
 
 export type TopKampusType = {

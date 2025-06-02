@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, Link } from "expo-router";
@@ -14,8 +14,8 @@ import { CategoryRating } from "./components/CategoryRating";
 import { ReviewListItem, stringToCategory } from "./components/ReviewListItem";
 import { 
     KampusDataType, 
+    KampusFetchType, 
     KampusReviewType, 
-    kampusDataDummy, 
     kampusReviewDummy,
 } from "./type";
 
@@ -26,12 +26,30 @@ export default function CampusScreen() {
 
     const [kampus, setKampus] = useState<KampusDataType | null>(null);
     const [reviews, setReviews] = useState<KampusReviewType[]>([]);
+
+    const fetchKampus = useCallback(async (kampusId: number) => {
+        try { 
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/kampus/${kampusId}`;
+            const res = await fetch(url);
+            if (!res.ok) return;
+
+            const json: KampusFetchType = await res.json();
+            const data: KampusDataType = {
+                id: json.data.kampusId,
+                jumlahDosen: json.data.jumlah_dosen,
+                nama: json.data.nama,
+                akreditasi: json.data.akreditasi,
+                rating: json.data.rating,
+            };
+            setKampus(data);
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
     
     useEffect(() => {
-        // console.log(local.kampusId);
-        // fetch here
-
-        setKampus(kampusDataDummy);
+        fetchKampus(local.kampusId);
         setReviews(kampusReviewDummy);
     },[]);
 
@@ -44,9 +62,9 @@ export default function CampusScreen() {
                 <View style={{ paddingHorizontal: 28 }}>
                     <Title>{kampus.nama}</Title>
                     <Subtitle>Akreditasi {kampus.akreditasi}</Subtitle>
-                    <Link href={`/(tabs)/listDosen/${kampus.id}`}>
+                    <Link href={`/(tabs)/listDosen?id=${kampus.id}&name=${kampus.nama}`}>
                         <Subtitle style={{ textDecorationLine: "underline", color: Colors.primary }}>
-                            Lihat semua dosen (80)
+                        { `Lihat semua dosen (${kampus.jumlahDosen})` }
                         </Subtitle>
                     </Link>
 
