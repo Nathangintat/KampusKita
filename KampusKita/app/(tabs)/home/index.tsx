@@ -9,7 +9,7 @@ import { CustomText } from "./components/CustomText";
 import { EmphText } from "./components/EmphText";
 import { SearchBox } from "./components/SearchBox";
 import { ListItem } from "./components/ListItem";
-import { AddUsernameModal } from "./components/AddUsernameModal";
+import { ChangeUsernameModal } from "./components/ChangeUsernameModal";
 import { 
     TopDosenFetchType,
     TopDosenType, 
@@ -89,9 +89,9 @@ export default function HomeScreen() {
     }, []);
 
     async function loadUsername() {
-        const username = await SecureStore.getItemAsync('username');
-        if (username && username !== "") {
-            setUsername(username);
+        const uname = await SecureStore.getItemAsync('username');
+        if (uname && uname !== "") {
+            setUsername(uname);
             return;
         }
 
@@ -107,7 +107,6 @@ export default function HomeScreen() {
         loadUsername();
         fetchTopDosen();
         fetchTopKampus();
-        setUsername("Username");
     }, []);
 
     return (
@@ -170,12 +169,17 @@ export default function HomeScreen() {
                 ))}
               </View>
             </View>
+
         </ScrollView>
 
-        <AddUsernameModal 
+
+        <ChangeUsernameModal 
             visible={modalVisible} 
-            handleClose={(newUsername: string) => {
-                setUsername(newUsername);
+            title="Username Baru"
+            placeholder="Masukkan username baru"
+            handleClose={(newUsername: string | undefined) => {
+                if (newUsername) setUsername(newUsername);
+
                 setModalVisible(false);
             }} 
         />

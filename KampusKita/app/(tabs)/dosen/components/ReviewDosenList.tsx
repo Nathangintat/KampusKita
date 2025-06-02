@@ -8,24 +8,26 @@ export default {};
 
 interface Props {
     list: DosenReviewType[];
+    url: string;
 }
 
-export function ReviewDosenList({ list }: Props) {
+export function ReviewDosenList({ list, url }: Props) {
     return (
         <FlatList
             scrollEnabled={false}
             data={list}
-            renderItem={({item}) => <ReviewItem item={item}/>}
+            renderItem={({item}) => <ReviewItem item={item} url={url}/>}
             keyExtractor={(item) => `${item.id}`}
         />
     );
 }
 
 interface ReviewItemProps {
-    item: DosenReviewType
+    item: DosenReviewType;
+    url: string;
 }
 
-function ReviewItem({ item }: ReviewItemProps) {
+function ReviewItem({ item, url }: ReviewItemProps) {
     const [data, setData] = useState<DosenReviewType>(item);
 
     return (
@@ -37,6 +39,7 @@ function ReviewItem({ item }: ReviewItemProps) {
                 hasLiked={data.hasLiked}
                 hasDisliked={data.hasDisliked}
                 date={data.date}
+                url={`${url}/${item.id}`}
             />
 
             {/* Review Content */}

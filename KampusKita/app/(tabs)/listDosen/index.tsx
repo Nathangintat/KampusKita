@@ -6,8 +6,7 @@ import { HeaderWithBackButton } from "@/components/HeaderWithBackButton";
 import { Title } from "@/components/Title";
 import { Colors } from "@/constants/Colors";
 import { useCallback, useEffect, useState } from "react";
-import { SearchDosenFetchType, SearchDosenType } from "../search/types";
-import { kampusNameDummy, dosenListDummy, DosenListFetchType, DosenListItemType } from "./type";
+import { DosenListFetchType, DosenListItemType } from "./type";
 import { DosenListItem } from "./components/DosenListItem";
 
 export default function ListDosenScreen() {
@@ -32,10 +31,6 @@ export default function ListDosenScreen() {
                 };
             });
             setListDosen(data);
-            /*
-            setKampusName(data[0].kampus);
-            */
-
         } catch (error) {
             console.error(error);
         }

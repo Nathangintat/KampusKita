@@ -4,22 +4,23 @@ import { Colors } from "@/constants/Colors";
 
 interface Props {
     children: React.ReactNode;
+    disabled?: boolean;
     onPress: () => void;
 }
 
-export function BigButton({ children, onPress }: Props) {
+export function BigButton({ children, onPress, disabled }: Props) {
     return (
         <Pressable 
             style={{
-                backgroundColor: Colors.primary,
+                backgroundColor: disabled ? Colors.grey : Colors.primary,
                 borderRadius: 8,
                 height: 42,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
             }}
-            onPress={onPress}
-            android_ripple={{
+            onPress={disabled ? undefined : onPress}
+            android_ripple={disabled ? undefined : {
                 color: "rgba(0,0,0,0.3)",
                 borderless: false,
             }}

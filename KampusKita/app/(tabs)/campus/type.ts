@@ -59,6 +59,25 @@ export type KampusReviewType = {
     categoryRatings: KampusRatingType;
 }
 
+export type KampusReviewFetchType = {
+    data: {
+        content: string;
+        date: string;
+        dislike: number;
+        hasDisliked: boolean;
+        like: number;
+        hasLiked: boolean;
+        rating: {
+            fasilitas: number;
+            wifi: number;
+            lokasi: number;
+            organisasi: number;
+            worth_it: number;
+        };
+        reviewId: number;
+    }[];
+}
+
 export const kampusReviewDummy: KampusReviewType[] = [
     {
         id: 1,

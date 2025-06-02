@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/ThePlatypus-Person/KampusKita/internal/adapter/handler/request"
@@ -53,14 +55,25 @@ func (rd *reviewDosenHandler) CreateReviewDosen(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(errorResp)
 	}
 
+	dosenId, err := strconv.ParseUint(req.DosenID, 10, 32)
+	if err != nil {
+		code := "[HANDLER] CreateReviewDosen - 3.5"
+		log.Errorw(code, err)
+		errorResp.Meta.Status = false
+		errorResp.Meta.Message = err.Error()
+
+		return c.Status(fiber.StatusBadRequest).JSON(errorResp)
+	}
+
 	reqEntity := entity.ReviewDosenEntity{
 		UserID:    uint(userID),
-		DosenID:   req.DosenID,
+		DosenID:   uint(dosenId),
 		Matkul:    req.Matkul,
 		Content:   req.Content,
 		Rating:    req.Rating,
 		CreatedAt: time.Now(),
 	}
+	fmt.Printf("dosenId = %d\n", reqEntity.DosenID)
 
 	err = rd.reviewDosenService.CreateReviewDosen(c.Context(), reqEntity)
 	if err != nil {
@@ -127,6 +140,7 @@ func (rd *reviewDosenHandler) GetReviewDosenById(c *fiber.Ctx) error {
 			HasDisliked: r.HasDisliked,
 		})
 	}
+	fmt.Print(reviews)
 
 	resp := response.RatingDosenResponse{
 		KampusID: results.KampusID,

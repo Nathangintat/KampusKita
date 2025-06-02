@@ -7,14 +7,16 @@ import { useEffect, useState } from "react";
 interface Props {
     style?: ViewStyle;
     visible: boolean;
-    handleClose: (newUsername: string) => void;
+    handleClose: (newUsername: string | undefined) => void;
+    title: string;
+    placeholder: string;
 }
 
 function onlyLettersAndNumbers(str: string) {
-    return /^[a-zA-Z0-9]+$/.test(str);
+    return /^[a-zA-Z0-9 ]+$/.test(str);
 }
 
-export function AddUsernameModal({ style, visible, handleClose }: Props) {
+export function ChangeUsernameModal({ style, visible, handleClose, title, placeholder }: Props) {
     const [newUsername, setNewUsername] = useState<string>("");
     const [isValid, setIsValid] = useState<boolean>(false);
 
@@ -57,7 +59,7 @@ export function AddUsernameModal({ style, visible, handleClose }: Props) {
     }, [newUsername]);
 
     return (
-        <Modal animationType="fade" transparent={true} visible={visible}>
+        <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={() => handleClose(undefined)}>
             <View style={styles.modalView}>
             <View style={styles.modalBox}>
 
@@ -65,11 +67,11 @@ export function AddUsernameModal({ style, visible, handleClose }: Props) {
                     color: Colors.text, 
                     fontSize: 24, 
                     fontWeight: "bold" 
-                }}>Username Baru</Text>
+                }}>{ title }</Text>
 
                 <View style={{...styles.textContainer, ...style}}>
                     <TextInput
-                        placeholder="Masukkan username baru"
+                        placeholder={placeholder}
                         placeholderTextColor={Colors.lightGrey}
                         style={styles.textInput}
                         value={newUsername}

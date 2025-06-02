@@ -1,10 +1,11 @@
 package middleware
 
 import (
+	"strings"
+
 	"github.com/ThePlatypus-Person/KampusKita/config"
 	"github.com/ThePlatypus-Person/KampusKita/internal/adapter/handler/response"
 	"github.com/ThePlatypus-Person/KampusKita/lib/auth"
-	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,7 +22,7 @@ type Options struct {
 func (o *Options) CheckToken() func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		var errorResponse response.ErrorResponseDefault
-		authHandler := c.Get("Authorization")
+		authHandler := c.Get("authorization")
 		if authHandler == "" {
 			errorResponse.Meta.Status = false
 			errorResponse.Meta.Message = "Missing Authorization header"

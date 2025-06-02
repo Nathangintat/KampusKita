@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { View, Pressable, Text, StyleSheet } from "react-native";
+import * as SecureStore from 'expo-secure-store';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Colors } from "@/constants/Colors";
 
@@ -9,12 +10,13 @@ interface Props {
     hasLiked: boolean;
     hasDisliked: boolean;
     date: Date;
+    url: string;
 }
 
 export function ReviewItemHeader(props: Props) {
     const [data, setData] = useState(props);
 
-    function handleLike() {
+    async function handleLike() {
         setData(prev => {
             return {
                 ...prev,
@@ -24,9 +26,27 @@ export function ReviewItemHeader(props: Props) {
                 hasDisliked: false,
             }
         });
+        
+        try {
+            const jwt = await SecureStore.getItemAsync('jwtToken');
+            const url = `${props.url}/like`;
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    authorization: `Bearer ${jwt}`,
+                    "content-type": "application/json",
+                }
+            });
+            if (!res.ok) return;
+
+            const json = await res.json();
+            console.log(json);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    function handleDislike() {
+    async function handleDislike() {
         setData(prev => {
             return {
                 ...prev,
@@ -36,6 +56,24 @@ export function ReviewItemHeader(props: Props) {
                 hasLiked: false,
             }
         });
+        
+        try {
+            const jwt = await SecureStore.getItemAsync('jwtToken');
+            const url = `${props.url}/dislike`;
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    authorization: `Bearer ${jwt}`,
+                    "content-type": "application/json",
+                }
+            });
+            if (!res.ok) return;
+
+            const json = await res.json();
+            console.log(json);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (

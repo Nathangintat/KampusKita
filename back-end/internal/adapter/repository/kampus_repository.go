@@ -161,7 +161,7 @@ func (k *kampusRepository) GetTopFasilitasKampus(ctx context.Context) ([]entity.
 		Joins("LEFT JOIN review_kampus ON review_kampus.kp_id = kp_map.id").
 		Group("kampus.id, kampus.nama, kampus.nama_singkat").
 		Order("total DESC, kampus.nama ASC").
-		Limit(5).
+		//Limit(5).
 		Scan(&rankingList).Error
 
 	if err != nil {

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from "expo-router";
+import * as SecureStore from 'expo-secure-store';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -17,12 +18,65 @@ import { BigButton } from '@/components/BigButton';
 
 export default function ReviewKampusScreen() {
     const local = useLocalSearchParams();
+    const [disableSubmit, setDisableSubmit] = useState<boolean>(true);
+    const [kampus, setKampus] = useState<{ id: number; nama: string; } | null>(null);
 
     const [fasilitas, setFasilitas] = useState<number>(0);
     const [wifi, setWifi] = useState<number>(0);
     const [lokasi, setLokasi] = useState<number>(0);
     const [organisasi, setOrganisasi] = useState<number>(0);
     const [worthIt, setWorthIt] = useState<number>(0);
+    const [ulasan, setUlasan] = useState<string>('');
+
+    async function handleSubmit() {
+        if (kampus === null) return;
+
+        try {
+            const jwt = await SecureStore.getItemAsync('jwtToken');
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/kampus/token/review`;
+            const res = await fetch(url, {
+                method: "POST",
+                body: JSON.stringify({
+                    kampus_id: kampus.id,
+                    fasilitas: fasilitas,
+                    wifi: wifi,
+                    lokasi: lokasi,
+                    organisasi: organisasi,
+                    worthIt: worthIt,
+                    content: ulasan,
+                }),
+                headers: {
+                    "content-type": "application/json",
+                    authorization: `Bearer ${jwt}`
+                },
+            });
+
+            
+            const json = await res.json();
+            console.log(json);
+
+            if (!res.ok) return;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        console.log(local);
+        setKampus({
+            id: local.id,
+            nama: local.name,
+        });
+    }, []);
+
+    useEffect(() => {
+        if (fasilitas === 0 || wifi === 0 || lokasi === 0 || worthIt === 0 || ulasan === '') {
+            setDisableSubmit(true);
+            return;
+        } 
+
+        setDisableSubmit(false);
+    }, [fasilitas, wifi, lokasi, organisasi, worthIt, ulasan]);
 
   return (
     <SafeAreaView 
@@ -63,12 +117,23 @@ export default function ReviewKampusScreen() {
                 </RatingBar>
 
                 <View style={{ marginBottom: 70 }}>
-                    <CustomTextInput title="Ulasan" placeholder="Berikan ulasan anda" multiline/>
+                    <CustomTextInput 
+                        title="Ulasan" 
+                        placeholder="Berikan ulasan anda" 
+                        value={ulasan}
+                        onChangeText={(text) => setUlasan(text)}
+                        multiline
+                    />
                 </View>
 
                 <View style={{ gap: 10, marginBottom: 30 }}>
                     <SmallText>Ulasan bersifat anonim dan tidak dapat diedit setelah dikirim.</SmallText>
-                    <BigButton onPress={() => console.log("kirim ulasan")}>Kirim Ulasan</BigButton>
+                    <BigButton 
+                        disabled={disableSubmit} 
+                        onPress={handleSubmit}
+                    >
+                        Kirim Ulasan
+                    </BigButton>
                 </View>
             </View>
         </ScrollView>

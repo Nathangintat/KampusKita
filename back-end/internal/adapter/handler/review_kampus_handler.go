@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/ThePlatypus-Person/KampusKita/internal/adapter/handler/request"
@@ -53,9 +54,10 @@ func (kh *reviewKampustHandler) CreateReviewKampus(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(errorResp)
 	}
 
+	kampusId, err := strconv.ParseUint(req.KampusId, 10, 32)
 	reqEntity := entity.ReviewKampusEntity{
 		UserID:          int64(userID),
-		KPMapID:         req.KpID,
+		KPMapID:         int64(kampusId),
 		Content:         req.Content,
 		RatingFasilitas: req.Fasilitas,
 		RatingInternet:  req.Wifi,

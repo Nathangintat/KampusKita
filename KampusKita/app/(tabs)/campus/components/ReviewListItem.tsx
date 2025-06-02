@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { ReviewItemHeader } from "@/components/ReviewItemHeader";
 import { CategoryRating } from "./CategoryRating";
-import { ReviewItem, Categories } from "../type";
+import { KampusReviewType, Categories } from "../type";
 
 export default {};
 
@@ -18,10 +18,11 @@ export function stringToCategory(str: string) {
 }
 
 interface Props {
-    item: ReviewItem
+    item: KampusReviewType;
+    url: string;
 }
 
-export function ReviewListItem({ item }: Props) {
+export function ReviewListItem({ item, url }: Props) {
     return (
         <View style={styles.container}>
             <ReviewItemHeader
@@ -30,6 +31,7 @@ export function ReviewListItem({ item }: Props) {
                 hasLiked={item.hasLiked}
                 hasDisliked={item.hasDisliked}
                 date={new Date(item.date)}
+                url={`${url}/${item.id}`}
             />
 
             <View style={styles.ratingTextView}>

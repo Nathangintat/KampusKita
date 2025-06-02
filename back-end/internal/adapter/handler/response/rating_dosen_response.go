@@ -16,5 +16,5 @@ type ReviewDosenResponse struct {
 	Like        int64     `json:"like"`
 	Dislike     int64     `json:"dislike"`
 	HasLiked    bool      `json:"hasLiked"`
-	HasDisliked bool      `json:"hasDisiked"`
+	HasDisliked bool      `json:"hasDisliked"`
 }

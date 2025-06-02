@@ -7,9 +7,11 @@ interface Props {
     placeholder: string;
     style?: TextStyle;
     multiline?: boolean;
+    value: string;
+    onChangeText: (text: string) => void;
 }
 
-export function CustomTextInput({ title, placeholder, style, multiline }: Props) {
+export function CustomTextInput({ title, placeholder, style, multiline, value, onChangeText }: Props) {
     return (
         <>
             <Subtitle>{title}</Subtitle>
@@ -31,6 +33,8 @@ export function CustomTextInput({ title, placeholder, style, multiline }: Props)
             placeholder={placeholder}
             multiline={multiline}
             textAlignVertical="top"
+            value={value}
+            onChangeText={onChangeText}
             />
         </>
     );

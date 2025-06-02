@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import * as SecureStore from 'expo-secure-store';
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, Link } from "expo-router";
@@ -15,8 +16,8 @@ import { ReviewListItem, stringToCategory } from "./components/ReviewListItem";
 import { 
     KampusDataType, 
     KampusFetchType, 
+    KampusReviewFetchType, 
     KampusReviewType, 
-    kampusReviewDummy,
 } from "./type";
 
 
@@ -25,7 +26,7 @@ export default function CampusScreen() {
     const router = useRouter();
 
     const [kampus, setKampus] = useState<KampusDataType | null>(null);
-    const [reviews, setReviews] = useState<KampusReviewType[]>([]);
+    const [reviews, setReviews] = useState<KampusReviewType[] | null>(null);
 
     const fetchKampus = useCallback(async (kampusId: number) => {
         try { 
@@ -47,10 +48,62 @@ export default function CampusScreen() {
         }
     }, []);
 
+    const fetchReviews = useCallback(async (kampusId: number) => {
+        try { 
+            const jwt = await SecureStore.getItemAsync('jwtToken');
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/kampus/token/${kampusId}/review`;
+            const res = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "content-type": "application/json",
+                    authorization: `Bearer ${jwt}`
+                }
+            });
+            if (!res.ok) return;
+
+            const json: KampusReviewFetchType = await res.json();
+            json.data.forEach(item => {
+                console.log(item);
+
+                if (item.rating !== null)
+                    console.log(item.rating);
+            });
+
+            if (json.data === null || json.data.length < 1) {
+                setReviews(null);
+                return;
+            }
+
+            const data: KampusReviewType[] = json.data.map(item => {
+                return {
+                    id: item.reviewId,
+                    date: new Date(item.date),
+                    content: item.content,
+                    like: item.like,
+                    dislike: item.dislike,
+                    hasLiked: item.hasLiked,
+                    hasDisliked: item.hasDisliked,
+                    categoryRatings: {
+                        fasilitas: item.rating.fasilitas,
+                        wifi: item.rating.wifi,
+                        lokasi: item.rating.lokasi,
+                        organisasi: item.rating.organisasi,
+                        worthIt: item.rating.worth_it,
+                    },
+                }
+            });
+
+            setReviews(data);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
     
     useEffect(() => {
         fetchKampus(local.kampusId);
-        setReviews(kampusReviewDummy);
+        fetchReviews(local.kampusId);
     },[]);
 
     return (
@@ -89,12 +142,14 @@ export default function CampusScreen() {
                     </View>
 
                     <ReviewHeader
-                        count={reviews.length}
-                        onPress={() => router.navigate(`/(tabs)/reviewKampus/${kampus.id}`)}
+                        count={reviews ? reviews.length : 0}
+                        onPress={() => router.navigate(`/(tabs)/reviewKampus?id=${kampus.id}&name=${kampus.nama}`)}
                     />
 
-                    {reviews.map((review, index) => (
-                        <ReviewListItem key={index} item={review}/>
+                    {reviews && reviews.map((review, index) => (
+                        <ReviewListItem key={index} item={review} 
+                            url={`${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/kampus/token/${kampus.id}/review`}
+                        />
                     ))}
 
                 </View>
