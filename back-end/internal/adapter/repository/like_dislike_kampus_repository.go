@@ -41,6 +41,13 @@ func (l *likeDislikeKampusRepository) AddLikeKampus(ctx context.Context, reviewI
 			}).Error; err != nil {
 				return err
 			}
+		} else {
+			err := db.Where("rk_id = ? AND user_id = ?", reviewID, userID).Delete(&model.LikeRKMap{}).Error
+			if err != nil {
+				code = "[REPOSITORY] AddLikeKampus - 2"
+				log.Errorw(code, err)
+				return err
+			}
 		}
 		return err
 	})
@@ -68,6 +75,13 @@ func (l *likeDislikeKampusRepository) AddDislikeKampus(ctx context.Context, revi
 				RkID:   uint(reviewID),
 				UserID: uint(userID),
 			}).Error; err != nil {
+				return err
+			}
+		} else {
+			err := db.Where("rk_id = ? AND user_id = ?", reviewID, userID).Delete(&model.DislikeRKMap{}).Error
+			if err != nil {
+				code = "[REPOSITORY] AddDislikeKampus - 2"
+				log.Errorw(code, err)
 				return err
 			}
 		}
