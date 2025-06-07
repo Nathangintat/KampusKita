@@ -41,6 +41,13 @@ func (l *likeDislikeDosenRepository) AddLikeDosen(ctx context.Context, reviewID,
 			}).Error; err != nil {
 				return err
 			}
+		} else {
+			err := db.Where("rd_id = ? AND user_id = ?", reviewID, userID).Delete(&model.LikeRDMap{}).Error
+			if err != nil {
+				code = "[REPOSITORY] AddLikeDosen - 2"
+				log.Errorw(code, err)
+				return err
+			}
 		}
 		return err
 	})
@@ -68,6 +75,13 @@ func (l *likeDislikeDosenRepository) AddDislikeDosen(ctx context.Context, review
 				RdID:   uint(reviewID),
 				UserID: uint(userID),
 			}).Error; err != nil {
+				return err
+			}
+		} else {
+			err := db.Where("rd_id = ? AND user_id = ?", reviewID, userID).Delete(&model.DislikeRDMap{}).Error
+			if err != nil {
+				code = "[REPOSITORY] AddDislikeDosen - 2"
+				log.Errorw(code, err)
 				return err
 			}
 		}
