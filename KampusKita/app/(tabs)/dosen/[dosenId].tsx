@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as SecureStore from 'expo-secure-store';
-import { useRouter, Link, useLocalSearchParams } from "expo-router";
+import { useRouter, Link, useLocalSearchParams, useFocusEffect } from "expo-router";
 
 import { Colors } from '@/constants/Colors';
 import { HeaderWithBackButton } from '@/components/HeaderWithBackButton';
@@ -36,6 +36,7 @@ export default function DosenScreen() {
                 prodi: json.data.prodi,
             };
             setDosen(data);
+            console.log(data);
         } catch (error) {
             console.error(error);
         }
@@ -56,7 +57,6 @@ export default function DosenScreen() {
             if (!res.ok) return;
 
             const json: DosenReviewFetchType = await res.json();
-            console.log(json);
 
             if (json.data.rating === null) {
                 setReviewList(null);
@@ -67,13 +67,13 @@ export default function DosenScreen() {
                 return {
                     id: item.reviewId,
                     date: new Date(item.date),
+                    matkul: item.matkul,
                     content: item.content,
-                    matkul: item.content,
                     like: item.like,
                     dislike: item.dislike,
                     hasLiked: item.hasLiked,
                     hasDisliked: item.hasDisliked,
-                    rating: 4.5,
+                    rating: item.rating,
                 };
             });
             setReviewList(data);
@@ -83,10 +83,12 @@ export default function DosenScreen() {
     }, []);
 
 
-    useEffect(() => {
-        fetchDosen(local.dosenId);
-        fetchReviews(local.dosenId);
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            fetchDosen(local.dosenId);
+            fetchReviews(local.dosenId);
+        }, [])
+    );
 
   return (
     <SafeAreaView 
@@ -111,7 +113,7 @@ export default function DosenScreen() {
                     </Link>
                 </View>
 
-                <TotalRating>{dosen.rating}</TotalRating>
+                <TotalRating>{dosen.rating.toFixed(1)}</TotalRating>
 
                     <ReviewHeader 
                         count={reviewList === null ? 0 : reviewList.length} 

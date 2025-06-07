@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { ScrollView, Text, View, Pressable, Modal, StyleSheet } from "react-native";
 import * as SecureStore from 'expo-secure-store';
 import { Colors } from "@/constants/Colors";
@@ -103,11 +103,13 @@ export default function HomeScreen() {
     // Fetch here
     // Store JWT:
     // https://docs.expo.dev/versions/latest/sdk/securestore/
-    useEffect(() => {
-        loadUsername();
-        fetchTopDosen();
-        fetchTopKampus();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            loadUsername();
+            fetchTopDosen();
+            fetchTopKampus();
+        }, [])
+    );
 
     return (
       <SafeAreaView style={{

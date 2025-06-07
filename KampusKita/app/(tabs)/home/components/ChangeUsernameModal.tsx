@@ -81,18 +81,29 @@ export function ChangeUsernameModal({ style, visible, handleClose, title, placeh
                 </View>
 
                 <View style={{
-                    alignSelf: "flex-end",
-                    backgroundColor: isValid ? Colors.success : Colors.error,
+                    alignSelf: "center",
+                    backgroundColor: isValid ? Colors.primary : Colors.grey,
                     borderRadius: 5,
                     marginRight: 5,
                     overflow: "hidden",
+                    paddingVertical: 5,
+                    paddingHorizontal: 10,
+
                 }}>
                     <Pressable android_ripple={{
                         color: "rgba(0,0,0,0.5)",
                         borderless: false,
                         foreground: true,
                     }} onPress={handleSubmit}>
+                    {/*
                         <MaterialIcons name="check" size={24} color={isValid ? Colors.grey : Colors.text} />
+                    */}
+                        <Text style={{
+                            lineHeight: 16,
+                            fontSize: 16,
+                            fontWeight: 700,
+                            color: Colors.text,
+                        }}>Confirm</Text>
                     </Pressable>
                 </View>
             </View>

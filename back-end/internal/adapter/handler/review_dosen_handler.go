@@ -134,6 +134,7 @@ func (rd *reviewDosenHandler) GetReviewDosenById(c *fiber.Ctx) error {
 			Date:        r.Date,
 			Content:     r.Content,
 			Matkul:      r.Matkul,
+			Rating: 	 r.Rating,
 			Like:        r.LikeCount,
 			Dislike:     r.DislikeCount,
 			HasLiked:    r.HasLiked,

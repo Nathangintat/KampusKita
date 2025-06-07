@@ -3,7 +3,7 @@ import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as SecureStore from 'expo-secure-store';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { Colors } from '@/constants/Colors';
 import { HeaderWithBackButton } from '@/components/HeaderWithBackButton';
@@ -15,6 +15,7 @@ import { SmallText } from '@/components/SmallText';
 import { BigButton } from '@/components/BigButton';
 
 export default function ReviewDosenScreen() {
+    const router = useRouter();
     const local = useLocalSearchParams();
     const [disableSubmit, setDisableSubmit] = useState<boolean>(true);
     const [dosen, setDosen] = useState<{ id: number, nama: string } | null>(null);
@@ -48,13 +49,14 @@ export default function ReviewDosenScreen() {
             console.log(json);
 
             if (!res.ok) return;
+
+            router.back();
         } catch (error) {
             console.error(error);
         }
     }
 
     useEffect(() => {
-        console.log(local);
         setDosen({
             id: local.id,
             nama: local.name,

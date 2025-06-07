@@ -7,6 +7,7 @@ type RatingDosenEntity struct {
 	Date         time.Time
 	Matkul       string
 	Content      string
+	Rating 		 int
 	LikeCount    int64
 	DislikeCount int64
 	HasLiked     bool

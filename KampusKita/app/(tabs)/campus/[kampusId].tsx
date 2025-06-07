@@ -1,9 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import * as SecureStore from 'expo-secure-store';
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter, Link } from "expo-router";
-import { useLocalSearchParams } from "expo-router";
+import { useRouter, Link, useFocusEffect, useLocalSearchParams } from "expo-router";
 
 import { HeaderWithBackButton } from "@/components/HeaderWithBackButton";
 import { ReviewHeader } from "@/components/ReviewHeader";
@@ -101,10 +100,12 @@ export default function CampusScreen() {
     }, []);
 
     
-    useEffect(() => {
-        fetchKampus(local.kampusId);
-        fetchReviews(local.kampusId);
-    },[]);
+    useFocusEffect(
+        useCallback(() => {
+            fetchKampus(local.kampusId);
+            fetchReviews(local.kampusId);
+        },[])
+    );
 
     return (
         <SafeAreaView style={{ backgroundColor: Colors.background1, flex: 1 }}>
@@ -122,8 +123,8 @@ export default function CampusScreen() {
                     </Link>
 
                     <TotalRating>
-                        { Object.entries(kampus.rating)
-                            .reduce((total, [subject, score]) => total + score, 0) / 5
+                        { (Object.entries(kampus.rating)
+                            .reduce((total, [subject, score]) => total + score, 0) / 5).toFixed(1)
                         }
                     </TotalRating>
 

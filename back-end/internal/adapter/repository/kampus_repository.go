@@ -13,6 +13,7 @@ import (
 type KampusRepository interface {
 	GetKampus(ctx context.Context) ([]entity.KampusEntity, error)
 	GetKampusByID(ctx context.Context, id int64) (*entity.KampusEntity, error)
+	GetProdiByKampusID(ctx context.Context, id int64) ([]entity.ProdiEntity, error)
 	SearchKampus(ctx context.Context, keyword string) ([]entity.KampusEntity, error)
 	GetDosenByKampusID(ctx context.Context, id int64) ([]entity.DosenItemEntity, error)
 	GetTopFasilitasKampus(ctx context.Context) ([]entity.RankingKampusEntity, error)
@@ -155,7 +156,7 @@ func (k *kampusRepository) GetTopFasilitasKampus(ctx context.Context) ([]entity.
         kampus.id AS kampus_id,
         kampus.nama,
         kampus.nama_singkat,
-        AVG(review_kampus.rating_fasilitas) AS total
+        COALESCE(AVG(review_kampus.rating_fasilitas), 0) AS total
     	`).
 		Joins("LEFT JOIN kp_map ON kp_map.id = kampus.id").
 		Joins("LEFT JOIN review_kampus ON review_kampus.kp_id = kp_map.id").
@@ -175,6 +176,35 @@ func (k *kampusRepository) GetTopFasilitasKampus(ctx context.Context) ([]entity.
 	}
 
 	return rankingList, nil
+}
+
+func (k *kampusRepository) GetProdiByKampusID(ctx context.Context, id int64) ([]entity.ProdiEntity, error) {
+	var prodiList []model.Prodi
+
+	err := k.db.Table("prodi").
+		Select(`
+			prodi.id,
+			prodi.nama
+    	`).
+		Joins("JOIN kp_map ON kp_map.prodi_id = prodi.id").
+		Where("kp_map.kampus_id = ?", id).
+		Scan(&prodiList).Error
+
+	if err != nil {
+		code = "[REPOSITORY] GetProdiByKampusID - 1"
+		log.Errorw(code, err)
+		return nil, err
+	}
+
+	var result []entity.ProdiEntity
+	for _, d := range prodiList {
+		result = append(result, entity.ProdiEntity{
+			ID: int64(d.ID),
+			Nama:    d.Nama,
+		})
+	}
+
+	return result, nil
 }
 
 func NewKampusRepository(db *gorm.DB) KampusRepository {

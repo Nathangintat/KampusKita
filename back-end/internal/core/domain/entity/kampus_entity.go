@@ -7,3 +7,8 @@ type KampusEntity struct {
 	Akreditasi  string
 	JumlahDosen int64
 }
+
+type ProdiEntity struct {
+	ID          int64
+	Nama        string
+}

@@ -31,12 +31,12 @@ export default function RootLayout() {
                 contentStyle: { backgroundColor: Colors.background3 },
                 headerShown: false,
             }}>
-                <Stack.Screen name="(tabs)/login"/>
+                <Stack.Screen name="(tabs)/login/index"/>
                 <Stack.Screen name="(tabs)/home/index"/>
                 <Stack.Screen name="(tabs)/campus/[kampusId]"/>
                 <Stack.Screen name="(tabs)/search/[search]"/>
                 <Stack.Screen name="(tabs)/dosen/[dosenId]"/>
-                <Stack.Screen name="(tabs)/settings"/>
+                <Stack.Screen name="(tabs)/settings/index"/>
                 {/*<Stack.Screen name="+not-found" />*/}
             </Stack>
             <StatusBar style="auto" />

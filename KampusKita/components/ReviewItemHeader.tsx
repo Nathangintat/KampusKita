@@ -99,7 +99,7 @@ export function ReviewItemHeader(props: Props) {
 
             {/* Date */}
             <Text style={styles.dateText}>
-                {data.date.getDay()} {monthNumToText(data.date.getMonth())}, {data.date.getFullYear()}
+                {data.date.getUTCDate()} {monthNumToText(data.date.getUTCMonth() + 1)}, {data.date.getFullYear()}
             </Text>
         </View>
     );

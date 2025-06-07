@@ -61,6 +61,7 @@ func (rd *reviewDosenRepository) GetReviewDosenByID(ctx context.Context, dosenId
 		created_at AS date,
 		content,
 		matkul,
+		rating,
 		COALESCE((SELECT COUNT(*) FROM like_rd_map WHERE rd_id = review_dosen.id), 0) AS like_count,
 		COALESCE((SELECT COUNT(*) FROM dislike_rd_map WHERE rd_id = review_dosen.id), 0) AS dislike_count,
 		COALESCE((SELECT COUNT(*) FROM like_rd_map WHERE rd_id = review_dosen.id AND user_id = ?), 0) > 0 AS has_liked,

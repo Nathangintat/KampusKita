@@ -12,6 +12,7 @@ type ReviewDosenResponse struct {
 	ReviewID    uint      `json:"reviewId"`
 	Date        time.Time `json:"date"`
 	Content     string    `json:"content"`
+	Rating 		int   	  `json:"rating"`
 	Matkul      string    `json:"matkul"`
 	Like        int64     `json:"like"`
 	Dislike     int64     `json:"dislike"`

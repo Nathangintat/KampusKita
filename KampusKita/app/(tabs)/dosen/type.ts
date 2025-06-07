@@ -46,6 +46,7 @@ export type DosenReviewFetchType = {
             reviewId: number;
             date: Date;
             content: string;
+            rating: number;
             matkul: string;
             like: number;
             dislike: number;

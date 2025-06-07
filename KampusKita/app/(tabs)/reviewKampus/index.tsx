@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as SecureStore from 'expo-secure-store';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -17,6 +17,7 @@ import { SmallText } from '@/components/SmallText';
 import { BigButton } from '@/components/BigButton';
 
 export default function ReviewKampusScreen() {
+    const router = useRouter();
     const local = useLocalSearchParams();
     const [disableSubmit, setDisableSubmit] = useState<boolean>(true);
     const [kampus, setKampus] = useState<{ id: number; nama: string; } | null>(null);
@@ -56,6 +57,8 @@ export default function ReviewKampusScreen() {
             console.log(json);
 
             if (!res.ok) return;
+
+            router.back();
         } catch (error) {
             console.error(error);
         }

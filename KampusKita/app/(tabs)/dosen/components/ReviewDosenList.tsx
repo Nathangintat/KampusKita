@@ -29,6 +29,7 @@ interface ReviewItemProps {
 
 function ReviewItem({ item, url }: ReviewItemProps) {
     const [data, setData] = useState<DosenReviewType>(item);
+    console.log(data);
 
     return (
         <View style={styles.container}>
@@ -45,7 +46,7 @@ function ReviewItem({ item, url }: ReviewItemProps) {
             {/* Review Content */}
             <View style={styles.reviewContent}>
                 <View style={styles.ratingItem}>
-                    <Text style={styles.ratingText}>{data.rating}</Text>
+                    <Text style={styles.ratingText}>{data.rating.toFixed(1)}</Text>
                 </View>
 
                 <View style={styles.reviewTextContainer}>

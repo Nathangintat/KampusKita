@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os/signal"
 	"syscall"
@@ -53,6 +54,7 @@ func RunServer() {
 	// Service
 	authService := service.NewAuthService(authrepo, cfg, jwt)
 	kampusService := service.NewKampusService(kampusrepo, reviewKampusrepo, cfg)
+	prodiService := service.NewProdiService(kampusrepo, cfg)
 	reviewKampusService := service.NewReviewKampusService(reviewKampusrepo, cfg)
 	likeDislikeService := service.NewLikeDislikeKampusService(likeDislikeRepo)
 	dosenService := service.NewDosenService(dosenrepo)
@@ -64,6 +66,7 @@ func RunServer() {
 	// Handler
 	authHandler := handler.NewAuthHandler(authService)
 	kampusHandler := handler.NewKampusHandler(kampusService)
+	prodiHandler := handler.NewProdiHandler(prodiService)
 	reviewHandler := handler.NewReviewKampusHandler(reviewKampusService)
 	likeDislikeHandler := handler.NewLikeDislikeKampusHandler(likeDislikeService)
 	dosenHandler := handler.NewDosenHandler(dosenService)
@@ -93,6 +96,13 @@ func RunServer() {
 	kampusApp := api.Group("/kampus")
 	KampusApptoken := kampusApp.Group("/token")
 	KampusApptoken.Use(middlewareAuth.CheckToken())
+
+	//Prodi
+	api.Get("/prodi/:kampusID", prodiHandler.GetProdiByKampusID)
+
+	//Verifikasi
+	verifyApp := api.Group("/verify")
+	verifyApp.Post("/image", uploadImage)
 
 	//Kampus
 	kampusApp.Get("/", kampusHandler.GetKampus)
@@ -154,4 +164,43 @@ func RunServer() {
 	defer cancel()
 
 	app.ShutdownWithContext(ctx)
+}
+
+
+func uploadImage(c *fiber.Ctx) error {
+	log.Println("test");
+	file, err := c.FormFile("image")
+
+	if err != nil {
+		log.Println("Error uploading Image: ", err)
+		return c.JSON(fiber.Map{
+			"status": 500, 
+			"message": "Server error", 
+			"data": nil,
+		})
+	}
+
+	imageName := fmt.Sprintf("./public/images/%s", file.Filename)
+	err = c.SaveFile(file, imageName)
+
+	if err != nil {
+		log.Println("Error saving image: ", err)
+		return c.JSON(fiber.Map{
+			"status": 500, 
+			"message": "Server error", 
+			"data": nil,
+		})
+	}
+
+	data := map[string]interface{}{
+		"imageName": imageName,
+		"header": file.Header,
+		"size": file.Size,
+	}
+
+	return c.JSON(fiber.Map{
+		"status": 201,
+		"message": "Image uploaded successfully", 
+		"data": data,
+	})
 }
