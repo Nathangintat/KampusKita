@@ -1,14 +1,15 @@
 import React from "react";
-import { Pressable, Text } from "react-native";
+import { Pressable, Text, ViewStyle } from "react-native";
 import { Colors } from "@/constants/Colors";
 
 interface Props {
+    style?: ViewStyle;
     children: React.ReactNode;
     disabled?: boolean;
     onPress: () => void;
 }
 
-export function BigButton({ children, onPress, disabled }: Props) {
+export function BigButton({ style, children, onPress, disabled }: Props) {
     return (
         <Pressable 
             style={{
@@ -18,6 +19,7 @@ export function BigButton({ children, onPress, disabled }: Props) {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                ...style,
             }}
             onPress={disabled ? undefined : onPress}
             android_ripple={disabled ? undefined : {

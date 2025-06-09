@@ -1,7 +1,6 @@
 import { FlatList, View, Text, StyleSheet } from "react-native";
 import { ReviewItemHeader } from "@/components/ReviewItemHeader";
 import { Colors } from "@/constants/Colors";
-import { useState } from "react";
 import { DosenReviewType } from "../type";
 
 export default {};
@@ -28,30 +27,27 @@ interface ReviewItemProps {
 }
 
 function ReviewItem({ item, url }: ReviewItemProps) {
-    const [data, setData] = useState<DosenReviewType>(item);
-    console.log(data);
-
     return (
         <View style={styles.container}>
             {/* Top Row */}
             <ReviewItemHeader
-                like={data.like}
-                dislike={data.dislike}
-                hasLiked={data.hasLiked}
-                hasDisliked={data.hasDisliked}
-                date={data.date}
+                like={item.like}
+                dislike={item.dislike}
+                hasLiked={item.hasLiked}
+                hasDisliked={item.hasDisliked}
+                date={item.date}
                 url={`${url}/${item.id}`}
             />
 
             {/* Review Content */}
             <View style={styles.reviewContent}>
                 <View style={styles.ratingItem}>
-                    <Text style={styles.ratingText}>{data.rating.toFixed(1)}</Text>
+                    <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
                 </View>
 
                 <View style={styles.reviewTextContainer}>
-                    <Text style={styles.matkulText}>{data.matkul}</Text>
-                    <Text style={styles.reviewText}>{data.content}</Text>
+                    <Text style={styles.matkulText}>{item.matkul}</Text>
+                    <Text style={styles.reviewText}>{item.content}</Text>
                 </View>
             </View>
         </View>

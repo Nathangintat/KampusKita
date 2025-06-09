@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as SecureStore from 'expo-secure-store';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { Colors } from '@/constants/Colors';
 import { HeaderWithBackButton } from '@/components/HeaderWithBackButton';
@@ -13,8 +13,9 @@ import { Subtitle } from '@/components/Subtitle';
 import { CustomTextInput } from '@/components/CustomTextInput';
 import { SmallText } from '@/components/SmallText';
 import { BigButton } from '@/components/BigButton';
+import { ReviewDataFetchType } from './type';
 
-export default function ReviewDosenScreen() {
+export default function EditReviewDosenScreen() {
     const router = useRouter();
     const local = useLocalSearchParams();
     const [disableSubmit, setDisableSubmit] = useState<boolean>(true);
@@ -31,7 +32,7 @@ export default function ReviewDosenScreen() {
             const jwt = await SecureStore.getItemAsync('jwtToken');
             const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/dosen/token/review`;
             const res = await fetch(url, {
-                method: "POST",
+                method: "PUT",
                 body: JSON.stringify({
                     dosen_id: dosen.id,
                     rating: rating,
@@ -43,8 +44,37 @@ export default function ReviewDosenScreen() {
                     authorization: `Bearer ${jwt}`
                 },
             });
+            
+            const json = await res.json();
+            console.log(json);
 
             if (!res.ok) return;
+            router.back();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function handleDelete() {
+        if (dosen === null) return;
+
+        try {
+            const jwt = await SecureStore.getItemAsync('jwtToken');
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/dosen/token/${dosen.id}/review`;
+            const res = await fetch(url, {
+                method: "DELETE",
+                headers: {
+                    authorization: `Bearer ${jwt}`,
+                    "content-type": "application/json",
+                }
+            });
+
+            if (!res.ok) {
+                console.log(res);
+                return;
+            }
+            const json = await res.json();
+            console.log(json);
 
             router.back();
         } catch (error) {
@@ -52,12 +82,35 @@ export default function ReviewDosenScreen() {
         }
     }
 
-    useEffect(() => {
-        setDosen({
-            id: local.id,
-            nama: local.name,
-        });
+    const fetchReviewData = useCallback(async (dosenId: number) => {
+        try {
+            const jwt = await SecureStore.getItemAsync('jwtToken');
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/dosen/token/${dosenId}/review`;
+            const res = await fetch(url, {
+                method: "GET",
+                headers: {
+                    authorization: `Bearer ${jwt}`,
+                    "content-type": "application/json",
+                }
+            });
+
+            if (!res.ok) return;
+            const json: ReviewDataFetchType = await res.json();
+            setRating(json.data.Rating);
+            setMatkul(json.data.Matkul);
+            setUlasan(json.data.Content);
+
+        } catch (error) {
+            console.error(error);
+        }
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            setDosen({ id: local.id, nama: local.name });
+            fetchReviewData(local.id);
+        }, [])
+    );
 
     useEffect(() => {
         if (rating === 0 || matkul === "" || ulasan === "") {
@@ -75,7 +128,7 @@ export default function ReviewDosenScreen() {
             height: "100%",
         }}
     >
-        <HeaderWithBackButton>Ulasan Dosen</HeaderWithBackButton>
+        <HeaderWithBackButton>Edit Ulasan Dosen</HeaderWithBackButton>
 
         <ScrollView>
         { dosen && dosen.nama &&
@@ -106,6 +159,7 @@ export default function ReviewDosenScreen() {
                 <View style={{ gap: 10, marginBottom: 30 }}>
                     <SmallText>Ulasan bersifat anonim dan tidak dapat diedit setelah dikirim.</SmallText>
                     <BigButton disabled={disableSubmit} onPress={handleSubmit}>Kirim Ulasan</BigButton>
+                    <BigButton style={{ backgroundColor: Colors.error }} onPress={handleDelete}>Hapus Ulasan</BigButton>
                 </View>
             </View>
         }

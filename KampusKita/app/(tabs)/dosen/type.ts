@@ -56,6 +56,17 @@ export type DosenReviewFetchType = {
     };
 }
 
+export enum ReviewStatus {
+    NotVerified,
+    DifferentKampusProdi,
+    HasReviewed,
+    Allow,
+}
+
+export type ReviewStatusFetchType = {
+    data: "NotVerified" | "DifferentKampusProdi" | "HasReviewed" | "Allow";
+}
+
 export const dosenReviewDummy: DosenReviewType[] = [
     { id: 1, date: new Date(), content: "Dosen yang luar biasa, menjelaskan semuanya dengan jelas.", matkul: "Statistik", like: 7, dislike: 1, hasLiked: false, hasDisliked: false, rating: 4.2 },
     { id: 2, date: new Date(), content: "Dosen yang luar biasa, menjelaskan semuanya dengan jelas.", matkul: "Statistik", like: 7, dislike: 1, hasLiked: false, hasDisliked: false, rating: 4.2 },
@@ -64,5 +75,3 @@ export const dosenReviewDummy: DosenReviewType[] = [
     { id: 5, date: new Date(), content: "Dosen yang luar biasa, menjelaskan semuanya dengan jelas.", matkul: "Statistik", like: 7, dislike: 1, hasLiked: false, hasDisliked: false, rating: 4.2 },
     { id: 6, date: new Date(), content: "Dosen yang luar biasa, menjelaskan semuanya dengan jelas.", matkul: "Statistik", like: 7, dislike: 1, hasLiked: false, hasDisliked: false, rating: 4.2 },
 ];
-
-

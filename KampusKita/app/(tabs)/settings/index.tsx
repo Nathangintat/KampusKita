@@ -9,7 +9,7 @@ import { Title } from '@/components/Title';
 import { Subtitle } from '@/components/Subtitle';
 import { BigButton } from '@/components/BigButton';
 import { ChangeUsernameModal } from "@/app/(tabs)/home/components/ChangeUsernameModal";
-import { VerifyStatus } from './type';
+import { VerifyStatus, VerifyStatusFetchType } from './type';
 
 export default function SettingsScreen() {
     const router = useRouter();
@@ -60,14 +60,24 @@ export default function SettingsScreen() {
             const res = await fetch(url, {
                 method: "GET",
                 headers: {
-                    "content-type": "application/json",
+                    "Content-Type": "application/json",
                     authorization: `Bearer ${jwt}`
                 }
             });
             if (!res.ok) return;
 
-            const json = await res.json();
-            console.log(json);
+            const json: VerifyStatusFetchType = await res.json();
+
+            switch (json.data.Status) {
+                case "Pending":
+                    setVerifyStatus(VerifyStatus.Pending);
+                    break;
+                case "Verified":
+                    setVerifyStatus(VerifyStatus.Verified);
+                    break;
+                default:
+                    setVerifyStatus(VerifyStatus.NotVerified);
+            }
         } catch (error) {
             console.error(error);
         }

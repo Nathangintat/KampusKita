@@ -77,7 +77,7 @@ func (v *verifyHandler) Verify(c *fiber.Ctx) error {
 	}
 
 	defaultSuccessResponse.Meta.Status = true
-	defaultSuccessResponse.Meta.Message = "Verify success"
+	defaultSuccessResponse.Meta.Message = "Success"
 	defaultSuccessResponse.Data = nil
 
 	return c.Status(fiber.StatusCreated).JSON(defaultSuccessResponse)
@@ -94,10 +94,10 @@ func (v *verifyHandler) GetVerifyStatus(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(errorResp)
 	}
 
-	_, err := v.verifyService.GetVerifyStatus(c.Context(), int64(claims.UserID))
+	status, err := v.verifyService.GetVerifyStatus(c.Context(), int64(claims.UserID))
 
 	if err != nil {
-		code := "[HANDLER] GetVerifyStatus - 1"
+		code := "[HANDLER] GetVerifyStatus - 2"
 		log.Errorw(code, err)
 		errorResp.Meta.Status = false
 		errorResp.Meta.Message = err.Error()
@@ -107,7 +107,7 @@ func (v *verifyHandler) GetVerifyStatus(c *fiber.Ctx) error {
 
 	defaultSuccessResponse.Meta.Status = true
 	defaultSuccessResponse.Meta.Message = "Verify success"
-	defaultSuccessResponse.Data = nil
+	defaultSuccessResponse.Data = status
 
 	return c.Status(fiber.StatusCreated).JSON(defaultSuccessResponse)
 }

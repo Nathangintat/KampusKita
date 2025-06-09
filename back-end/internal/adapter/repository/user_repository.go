@@ -32,7 +32,8 @@ func (u *userRepository) DeleteUserByID(ctx context.Context, id int64) error {
 func (u *userRepository) GetVerifyStatus(ctx context.Context, id int64) (*model.VerifyStatus, error) {
 	var verifyStatus model.VerifyStatus
 
-	err := u.db.Select(`
+	err := u.db.Table("users").
+		Select(`
 		CASE verify.is_verified
 			WHEN true THEN 'Verified'
 			WHEN false THEN 'Pending'

@@ -63,11 +63,12 @@ export function ChangeUsernameModal({ style, visible, handleClose, title, placeh
             <View style={styles.modalView}>
             <View style={styles.modalBox}>
 
-                <Text style={{
-                    color: Colors.text, 
-                    fontSize: 24, 
-                    fontWeight: "bold" 
-                }}>{ title }</Text>
+            <View style={styles.titleRow}>
+                <Text style={styles.titleText}>{ title }</Text>
+                <Pressable onPress={() => handleClose(undefined)}>
+                    <MaterialIcons name="close" size={20} color={Colors.text} />
+                </Pressable>
+            </View>
 
                 <View style={{...styles.textContainer, ...style}}>
                     <TextInput
@@ -90,20 +91,16 @@ export function ChangeUsernameModal({ style, visible, handleClose, title, placeh
                     paddingHorizontal: 10,
 
                 }}>
-                    <Pressable android_ripple={{
-                        color: "rgba(0,0,0,0.5)",
-                        borderless: false,
-                        foreground: true,
-                    }} onPress={handleSubmit}>
-                    {/*
-                        <MaterialIcons name="check" size={24} color={isValid ? Colors.grey : Colors.text} />
-                    */}
-                        <Text style={{
-                            lineHeight: 16,
-                            fontSize: 16,
-                            fontWeight: 700,
-                            color: Colors.text,
-                        }}>Confirm</Text>
+                    <Pressable 
+                        android_ripple={{
+                            color: "rgba(0,0,0,0.5)",
+                            borderless: true,
+                            foreground: true,
+                        }} 
+                        onPress={handleSubmit}
+                        disabled={!isValid}
+                    >
+                        <Text style={styles.confirmText}>Confirm</Text>
                     </Pressable>
                 </View>
             </View>
@@ -141,7 +138,24 @@ const styles = StyleSheet.create({
     textInput: { 
         flex: 1, 
         color: Colors.text, 
-        fontSize: 16 
+        fontSize: 16,
+    },
+    titleRow: { 
+        flexDirection: "row", 
+        alignItems: "center", 
+        width: "100%", 
+        justifyContent: "space-between",
+    },
+    titleText: {
+        color: Colors.text, 
+        fontSize: 24, 
+        fontWeight: "bold" ,
+    },
+    confirmText: {
+        lineHeight: 16,
+        fontSize: 16,
+        fontWeight: 700,
+        color: Colors.text,
     },
 });
 

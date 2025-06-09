@@ -91,6 +91,7 @@ func RunServer() {
 	userApp.Use(middlewareAuth.CheckToken())
 	userApp.Put("/change_username", userHandler.ChangeUsername)
 	userApp.Post("/verify", verifyHandler.Verify)
+	userApp.Get("/verify/status", verifyHandler.GetVerifyStatus)
 	userApp.Delete("/delete", userHandler.DeleteUser)
 
 	kampusApp := api.Group("/kampus")
@@ -122,9 +123,13 @@ func RunServer() {
 	dosenAppToken.Use(middlewareAuth.CheckToken())
 
 	dosenAppToken.Post("/review", reviewDosenHandler.CreateReviewDosen)
+	dosenAppToken.Put("/review", reviewDosenHandler.EditReviewDosen)
 	dosenAppToken.Post("/:kampusID/review/:reviewDosenId/like", likeDislikeDosenHandler.AddLikeDosen)
 	dosenAppToken.Post("/:kampusID/review/:reviewDosenId/dislike", likeDislikeDosenHandler.AddDislikeDosen)
-	dosenAppToken.Get("/:dosenId/review", reviewDosenHandler.GetReviewDosenById)
+	dosenAppToken.Get("/:dosenId/reviews", reviewDosenHandler.GetReviewDosenById)
+	dosenAppToken.Get("/:dosenId/review", reviewDosenHandler.GetReviewData)
+	dosenAppToken.Get("/:dosenId/review/status", reviewDosenHandler.GetReviewStatusById)
+	dosenAppToken.Delete("/:dosenId/review", reviewDosenHandler.DeleteReviewDosen)
 
 	dosenApp.Get("/search", dosenHandler.SearchDosen)
 	dosenApp.Get("/top", dosenHandler.GetTopDosen)
@@ -164,49 +169,3 @@ func RunServer() {
 
 	app.ShutdownWithContext(ctx)
 }
-
-
-/*
-func uploadImage(c *fiber.Ctx) error {
-	nim, err := c.FormFile("nim")
-	kampusId, err := c.FormFile("kampusId")
-	prodiId, err := c.FormFile("prodiId")
-	file, err := c.FormFile("image")
-
-	if err != nil {
-		log.Println("Error: nim, kampusId, prodiId, and ktm must not be empty. ", err)
-		return c.JSON(fiber.Map{
-			"status": 500, 
-			"message": "Server error", 
-			"data": nil,
-		})
-	}
-
-	imageName := fmt.Sprintf("./public/images/%s", file.Filename)
-	err = c.SaveFile(file, imageName)
-
-	if err != nil {
-		log.Println("Error saving image: ", err)
-		return c.JSON(fiber.Map{
-			"status": 500, 
-			"message": "Server error", 
-			"data": nil,
-		})
-	}
-
-	// get kpId from kampusId and prodiId
-	// add data to db
-
-	data := map[string]interface{}{
-		"imageName": imageName,
-		"header": file.Header,
-		"size": file.Size,
-	}
-
-	return c.JSON(fiber.Map{
-		"status": 201,
-		"message": "Image uploaded successfully", 
-		"data": data,
-	})
-}
-*/

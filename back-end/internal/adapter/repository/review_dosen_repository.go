@@ -13,6 +13,10 @@ import (
 type ReviewDosenRepository interface {
 	CreateReviewDosen(ctx context.Context, reviewDosen entity.ReviewDosenEntity) error
 	GetReviewDosenByID(ctx context.Context, dosenId, userid int64) (*entity.ReviewDosenItemEntity, []entity.RatingDosenEntity, error)
+	GetReviewStatusByID(ctx context.Context, dosenId, userId int64) (string, error)
+	GetReviewData(ctx context.Context, dosenId, userId int64) (*entity.ReviewDosenEntity, error)
+	EditReviewDosen(ctx context.Context, reviewDosen entity.ReviewDosenEntity) error
+	DeleteReviewDosen(ctx context.Context, dosenId, userId int64) error
 }
 
 type reviewDosenRepository struct {
@@ -85,6 +89,117 @@ func (rd *reviewDosenRepository) GetReviewDosenByID(ctx context.Context, dosenId
 	}
 
 	return resp, reviews, nil
+}
+
+func (rd *reviewDosenRepository) GetReviewStatusByID(ctx context.Context, dosenId, userId int64) (string, error) {
+	verifiedStatus := entity.CheckVerifiedUserEntity{}
+	err := rd.db.Table("users").
+		Select("email, COALESCE(is_verified, false) AS verify_status").
+		Joins("LEFT JOIN verify ON users.verify_id = verify.nim").
+		Where("users.id = ?", userId).
+		Limit(1).
+		Scan(&verifiedStatus).Error
+
+	if err != nil {
+		code = "[REPOSITORY] GetReviewStatusById - 1"
+		log.Errorw(code, err)
+		return "", err
+	}
+
+	if !verifiedStatus.VerifyStatus {
+		return "NotVerified", nil
+	}
+
+
+	kpMatch := entity.CheckKpMatchEntity{}
+	err = rd.db.Table("users").
+		Select(`email, 
+			CASE 
+				WHEN dosen.nama IS NOT NULL THEN true 
+				ELSE false 
+			END AS kp_matches, 
+			dosen.id AS dosen_id
+		`).
+		Joins("LEFT JOIN verify ON users.verify_id = verify.nim").
+		Joins("LEFT JOIN dosen ON verify.kp_id = dosen.kp_id").
+		Where("dosen.id = ? AND users.id = ?", dosenId, userId).
+		Limit(1).
+		Scan(&kpMatch).Error
+
+	if err != nil {
+		code = "[REPOSITORY] GetReviewStatusById - 2"
+		log.Errorw(code, err)
+		return "", err
+	}
+
+	if !kpMatch.KpMatches {
+		return "DifferentKampusProdi", nil
+	}
+
+
+	alreadyReviewed := entity.CheckAlreadyReviewedEntity{}
+	err = rd.db.Table("review_dosen").
+		Select("COUNT(*)").
+		Where("dosen_id = ? AND user_id = ?", dosenId, userId).
+		Scan(&alreadyReviewed).Error
+
+	if err != nil {
+		code = "[REPOSITORY] GetReviewStatusById - 3"
+		log.Errorw(code, err)
+		return "", err
+	}
+
+	if alreadyReviewed.Count > 0 {
+		return "HasReviewed", nil
+	}
+
+	return "Allow", nil
+}
+
+func (rd *reviewDosenRepository) GetReviewData(ctx context.Context, dosenId, userId int64) (*entity.ReviewDosenEntity, error) {
+	reviewData := entity.ReviewDosenEntity{}
+	err = rd.db.Table("review_dosen").
+		Select("*").
+		Where("dosen_id = ? AND user_id = ?", dosenId, userId).
+		Scan(&reviewData).Error
+
+	if err != nil {
+		code = "[REPOSITORY] GetReviewData - 1"
+		log.Errorw(code, err)
+		return nil, err
+	}
+
+	return &reviewData, nil
+}
+
+func (rd *reviewDosenRepository) EditReviewDosen(ctx context.Context, req entity.ReviewDosenEntity) error {
+	err := rd.db.Table("review_dosen").
+	Where("user_id = ? AND dosen_id = ?", req.UserID, req.DosenID).
+	Update("matkul", req.Matkul).
+	Update("content", req.Content).
+	Update("rating", req.Rating).
+	Error
+
+	if err != nil {
+		code = "[REPOSITORY] EditReviewDosen - 1"
+		log.Errorw(code, err)
+		return err
+	}
+	return nil
+}
+
+func (rd *reviewDosenRepository) DeleteReviewDosen(ctx context.Context, dosenId, userId int64) error {
+	err = rd.db.Table("review_dosen").
+		Where("dosen_id = ? AND user_id = ?", dosenId, userId).
+		Delete(nil).Error
+
+	if err != nil {
+		code = "[REPOSITORY] DeleteReviewData - 1"
+		log.Errorw(code, err)
+		return  err
+	}
+
+	return nil
 }
 
 func NewReviewDosenRepository(db *gorm.DB) ReviewDosenRepository {

@@ -5,3 +5,9 @@ export enum VerifyStatus {
     NotVerified,
     Pending,
 }
+
+export type VerifyStatusFetchType = {
+    data: {
+        Status: "Pending" | "NotVerified" | "Verified";
+    };
+}

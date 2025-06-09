@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, Modal, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as SecureStore from 'expo-secure-store';
 import { useRouter, Link, useLocalSearchParams, useFocusEffect } from "expo-router";
+import Toast from 'react-native-toast-message'
 
 import { Colors } from '@/constants/Colors';
 import { HeaderWithBackButton } from '@/components/HeaderWithBackButton';
@@ -11,12 +12,20 @@ import { Subtitle } from '@/components/Subtitle';
 import { TotalRating } from '@/components/TotalRating';
 import { ReviewHeader } from '@/components/ReviewHeader';
 import { ReviewDosenList } from './components/ReviewDosenList';
-import { DosenFetchType, DosenReviewFetchType, DosenReviewType, DosenType } from './type';
+import { 
+    DosenFetchType, 
+    DosenReviewFetchType, 
+    DosenReviewType, 
+    DosenType,
+    ReviewStatus,
+    ReviewStatusFetchType
+} from './type';
 
 export default function DosenScreen() {
     const local = useLocalSearchParams();
     const router = useRouter();
 
+    const [reviewStatus, setReviewStatus] = useState<ReviewStatus>(ReviewStatus.NotVerified);
     const [dosen, setDosen] = useState<DosenType | null>(null);
     const [reviewList, setReviewList] = useState<DosenReviewType[] | null>(null);
 
@@ -36,7 +45,6 @@ export default function DosenScreen() {
                 prodi: json.data.prodi,
             };
             setDosen(data);
-            console.log(data);
         } catch (error) {
             console.error(error);
         }
@@ -45,7 +53,7 @@ export default function DosenScreen() {
     const fetchReviews = useCallback(async (dosenId: number) => {
         try {
             const jwt = await SecureStore.getItemAsync('jwtToken');
-            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/dosen/token/${dosenId}/review`;
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/dosen/token/${dosenId}/reviews`;
             const res = await fetch(url, {
                 method: "GET",
                 headers: {
@@ -82,11 +90,71 @@ export default function DosenScreen() {
         }
     }, []);
 
+    const fetchReviewStatus = useCallback(async (dosenId: number) => {
+        try {
+            const jwt = await SecureStore.getItemAsync('jwtToken');
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/dosen/token/${dosenId}/review/status`;
+            const res = await fetch(url, {
+                method: "GET",
+                headers: {
+                    authorization: `Bearer ${jwt}`,
+                    "content-type": "application/json",
+                }
+            });
+
+            if (!res.ok) return;
+
+            const json: ReviewStatusFetchType = await res.json();
+
+            switch (json.data) {
+                case "HasReviewed":
+                    setReviewStatus(ReviewStatus.HasReviewed);
+                    break;
+                case "Allow":
+                    setReviewStatus(ReviewStatus.Allow);
+                    break;
+                case "DifferentKampusProdi":
+                    setReviewStatus(ReviewStatus.DifferentKampusProdi);
+                    break;
+                default:
+                    setReviewStatus(ReviewStatus.NotVerified);
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+    function handleReview() {
+        if (!dosen || !dosen.id || !dosen.nama) return;
+
+        if (reviewStatus === ReviewStatus.NotVerified) {
+            Toast.show({ type: "error", text1: "Akun anda belum tervalidasi" });
+            return;
+        } 
+
+        if (reviewStatus === ReviewStatus.DifferentKampusProdi) {
+            Toast.show({ type: "error", text1: "Anda berada di kampus atau prodi yang berbeda", text1Style: {
+                fontSize: 13,
+                fontWeight: 500,
+            }});
+
+            return;
+        } 
+
+        if (reviewStatus === ReviewStatus.HasReviewed) {
+            router.navigate(`/(tabs)/editReviewDosen?id=${dosen.id}&name=${dosen.nama}`)
+            return;
+        }
+
+        router.navigate(`/(tabs)/reviewDosen?id=${dosen.id}&name=${dosen.nama}`)
+    }
 
     useFocusEffect(
         useCallback(() => {
             fetchDosen(local.dosenId);
             fetchReviews(local.dosenId);
+            fetchReviewStatus(local.dosenId);
         }, [])
     );
 
@@ -117,7 +185,7 @@ export default function DosenScreen() {
 
                     <ReviewHeader 
                         count={reviewList === null ? 0 : reviewList.length} 
-                        onPress={() => router.navigate(`/(tabs)/reviewDosen?id=${dosen.id}&name=${dosen.nama}`)}
+                        onPress={handleReview}
                     />
 
                 { reviewList &&
@@ -129,6 +197,8 @@ export default function DosenScreen() {
             </View>
         </ScrollView>
         }
+
+        <Toast/>
     </SafeAreaView>
   );
 }
