@@ -16,6 +16,17 @@ export type KampusRatingType = {
     worthIt: number;
 }
 
+export enum ReviewStatus {
+    NotVerified,
+    DifferentKampus,
+    HasReviewed,
+    Allow,
+}
+
+export type ReviewStatusFetchType = {
+    data: "NotVerified" | "DifferentKampus" | "HasReviewed" | "Allow";
+}
+
 export type KampusDataType = {
     id: number;
     jumlahDosen: number;
@@ -29,7 +40,14 @@ export type KampusFetchType = {
         akreditasi: string;
         kampusId: number;
         nama: string;
-        rating: KampusRatingType;
+        rating:  {
+            total: number;
+            fasilitas: number;
+            wifi: number;
+            lokasi: number;
+            organisasi: number;
+            worthIt: number;
+        };
         jumlah_dosen: number;
     };
 }

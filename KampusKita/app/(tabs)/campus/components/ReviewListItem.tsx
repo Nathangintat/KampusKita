@@ -35,7 +35,10 @@ export function ReviewListItem({ item, url }: Props) {
             />
 
             <View style={styles.ratingTextView}>
-                <Text style={styles.ratingScore}>4.0</Text>
+                <Text style={styles.ratingScore}>
+                { (Object.entries(item.categoryRatings).reduce((sum, [_, score]) => {
+                    return sum + score;
+                }, 0) / 5).toFixed(1) }</Text>
                 <Text style={styles.ratingText}>{item.content}</Text>
             </View>
 

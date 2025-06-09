@@ -29,3 +29,9 @@ type ReviewKampusItemEntity struct {
 	RatingOrmawa    int
 	RatingWorthIt   int
 }
+
+type CheckKampusMatchEntity struct {
+	Email 		string
+	Matches 	bool
+	KampusID 	uint
+}

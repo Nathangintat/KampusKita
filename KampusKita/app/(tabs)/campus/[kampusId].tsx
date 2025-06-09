@@ -3,6 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, Link, useFocusEffect, useLocalSearchParams } from "expo-router";
+import Toast from 'react-native-toast-message'
 
 import { HeaderWithBackButton } from "@/components/HeaderWithBackButton";
 import { ReviewHeader } from "@/components/ReviewHeader";
@@ -17,6 +18,8 @@ import {
     KampusFetchType, 
     KampusReviewFetchType, 
     KampusReviewType, 
+    ReviewStatus,
+    ReviewStatusFetchType,
 } from "./type";
 
 
@@ -24,6 +27,7 @@ export default function CampusScreen() {
     const local = useLocalSearchParams();
     const router = useRouter();
 
+    const [reviewStatus, setReviewStatus] = useState<ReviewStatus>(ReviewStatus.NotVerified);
     const [kampus, setKampus] = useState<KampusDataType | null>(null);
     const [reviews, setReviews] = useState<KampusReviewType[] | null>(null);
 
@@ -99,11 +103,75 @@ export default function CampusScreen() {
         }
     }, []);
 
+    const fetchReviewStatus = useCallback(async (kampusId: number) => {
+        try {
+            const jwt = await SecureStore.getItemAsync('jwtToken');
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/kampus/token/${kampusId}/review/status`;
+            const res = await fetch(url, {
+                method: "GET",
+                headers: {
+                    authorization: `Bearer ${jwt}`,
+                    "content-type": "application/json",
+                }
+            });
+
+            if (!res.ok) return;
+
+            const json: ReviewStatusFetchType = await res.json();
+            console.log(json);
+
+            switch (json.data) {
+                case "HasReviewed":
+                    setReviewStatus(ReviewStatus.HasReviewed);
+                    break;
+                case "Allow":
+                    setReviewStatus(ReviewStatus.Allow);
+                    break;
+                case "DifferentKampus":
+                    setReviewStatus(ReviewStatus.DifferentKampus);
+                    break;
+                default:
+                    setReviewStatus(ReviewStatus.NotVerified);
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+    function handleReview() {
+        if (!kampus || !kampus.id || !kampus.nama) return;
+
+        if (reviewStatus === ReviewStatus.NotVerified) {
+            Toast.show({ type: "error", text1: "Akun anda belum tervalidasi", text1Style: {
+                fontSize: 13,
+                fontWeight: 500,
+            }});
+            return;
+        } 
+
+        if (reviewStatus === ReviewStatus.DifferentKampus) {
+            Toast.show({ type: "error", text1: "Anda berada di kampus yang berbeda", text1Style: {
+                fontSize: 13,
+                fontWeight: 500,
+            }});
+
+            return;
+        } 
+
+        if (reviewStatus === ReviewStatus.HasReviewed) {
+            router.navigate(`/(tabs)/editReviewKampus?id=${kampus.id}&name=${kampus.nama}`)
+            return;
+        }
+
+        router.navigate(`/(tabs)/reviewKampus?id=${kampus.id}&name=${kampus.nama}`)
+    }
     
     useFocusEffect(
         useCallback(() => {
             fetchKampus(local.kampusId);
             fetchReviews(local.kampusId);
+            fetchReviewStatus(local.kampusId);
         },[])
     );
 
@@ -123,9 +191,7 @@ export default function CampusScreen() {
                     </Link>
 
                     <TotalRating>
-                        { (Object.entries(kampus.rating)
-                            .reduce((total, [subject, score]) => total + score, 0) / 5).toFixed(1)
-                        }
+                        { kampus.rating.total.toFixed(1) }
                     </TotalRating>
 
                     <View style={{
@@ -133,18 +199,22 @@ export default function CampusScreen() {
                         flexWrap: "wrap",
                         justifyContent: "center",
                     }}>
-                        { Object.entries(kampus.rating).map(([subject, score], index) => (
-                            <CategoryRating
-                                key={index}
-                                category={stringToCategory(subject)}
-                                rating={score}
-                            />
-                        ))}
+                        { Object.entries(kampus.rating).map(([subject, score], index) => {
+                            if (subject === "total") return;
+
+                            return (
+                                <CategoryRating
+                                    key={index}
+                                    category={stringToCategory(subject)}
+                                    rating={score}
+                                />
+                            );
+                        })}
                     </View>
 
                     <ReviewHeader
                         count={reviews ? reviews.length : 0}
-                        onPress={() => router.navigate(`/(tabs)/reviewKampus?id=${kampus.id}&name=${kampus.nama}`)}
+                        onPress={handleReview}
                     />
 
                     {reviews && reviews.map((review, index) => (
@@ -156,6 +226,8 @@ export default function CampusScreen() {
                 </View>
             </ScrollView>
             }
+
+            <Toast/>
         </SafeAreaView>
     );
 }

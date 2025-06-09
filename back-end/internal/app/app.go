@@ -116,6 +116,10 @@ func RunServer() {
 	KampusApptoken.Post("/:kampusID/review/:reviewId/like", likeDislikeHandler.AddLikeKampus)
 	KampusApptoken.Post("/:kampusID/review/:reviewId/dislike", likeDislikeHandler.AddDislikeKampus)
 	KampusApptoken.Get("/:kampusID/review", reviewHandler.GetReviewKampusById)
+	KampusApptoken.Get("/:kampusID/review/status", reviewHandler.GetReviewStatusById)
+	KampusApptoken.Get("/:kampusID/review", reviewHandler.GetReviewData)
+	KampusApptoken.Put("/review", reviewHandler.EditReview)
+	KampusApptoken.Delete("/:kampusID/review", reviewHandler.DeleteReview)
 
 	//dosen
 	dosenApp := api.Group("/dosen")
@@ -123,12 +127,12 @@ func RunServer() {
 	dosenAppToken.Use(middlewareAuth.CheckToken())
 
 	dosenAppToken.Post("/review", reviewDosenHandler.CreateReviewDosen)
-	dosenAppToken.Put("/review", reviewDosenHandler.EditReviewDosen)
 	dosenAppToken.Post("/:kampusID/review/:reviewDosenId/like", likeDislikeDosenHandler.AddLikeDosen)
 	dosenAppToken.Post("/:kampusID/review/:reviewDosenId/dislike", likeDislikeDosenHandler.AddDislikeDosen)
 	dosenAppToken.Get("/:dosenId/reviews", reviewDosenHandler.GetReviewDosenById)
 	dosenAppToken.Get("/:dosenId/review", reviewDosenHandler.GetReviewData)
 	dosenAppToken.Get("/:dosenId/review/status", reviewDosenHandler.GetReviewStatusById)
+	dosenAppToken.Put("/review", reviewDosenHandler.EditReviewDosen)
 	dosenAppToken.Delete("/:dosenId/review", reviewDosenHandler.DeleteReviewDosen)
 
 	dosenApp.Get("/search", dosenHandler.SearchDosen)
