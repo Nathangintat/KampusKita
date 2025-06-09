@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS kp_map (
 CREATE TABLE IF NOT EXISTS verify (
     nim VARCHAR(20) PRIMARY KEY,
     kp_id INTEGER,
+    img_type VARCHAR(10),
     is_verified BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (kp_id) REFERENCES kp_map(id) ON DELETE SET NULL
 );

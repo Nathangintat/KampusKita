@@ -164,7 +164,7 @@ export default function SearchScreen() {
                                         <Text style={styles.topText}>{item.nama}</Text>
                                         <Text style={styles.bottomText}>{item.namaPendek}</Text>
                                     </View>
-                                    <Text style={styles.rating}>{item.rating}</Text>
+                                    <Text style={styles.rating}>{item.rating.toFixed(1)}</Text>
                                     <View style={{ height: 40 }}/>
                                 </Pressable>
                             </View>

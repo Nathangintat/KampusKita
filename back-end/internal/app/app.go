@@ -101,6 +101,12 @@ func RunServer() {
 	// Serve images
 	app.Static("/public/", "./public/images")
 
+	// Dashboard
+	dashboardApp := api.Group("/dashboard")
+	dashboardApp.Get("/verify", verifyHandler.GetAllVerifyRequest)
+	dashboardApp.Post("/verify/:nim", verifyHandler.ApproveVerifyRequest)
+	dashboardApp.Delete("/verify/:nim", verifyHandler.RejectVerifyRequest)
+
 	//Prodi
 	api.Get("/prodi/:kampusID", prodiHandler.GetProdiByKampusID)
 

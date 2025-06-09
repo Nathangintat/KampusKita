@@ -62,7 +62,7 @@ export default function VerifikasiScreen() {
             });
 
             setListProdi(data);
-            if (data.length > 0) setSelectedProdi(data[0]);
+            if (data.length > 0) setSelectedProdi(data[0].value);
         } catch (error) {
             console.error(error);
         }
@@ -94,6 +94,7 @@ export default function VerifikasiScreen() {
         formData.append("nim", nim);
         formData.append("kampusId", `${selectedKampus}`);
         formData.append("prodiId", `${selectedProdi}`);
+        formData.append("imgType", `${fileType}`);
         formData.append("image", {
             uri: ktm,
             name: fileName,

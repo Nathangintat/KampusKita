@@ -3,6 +3,7 @@ package model
 type Verify struct {
 	Nim        	string `gorm:"primaryKey"`
 	KpID     	int64  `gorm:"kp_id"`
+	ImgType 	string `gorm:"img_type"`
 	IsVerified 	bool   `gorm:"is_verified"`
 	KPID   		*KPMap `gorm:"foreignKey:KpID; references:ID"`
 }

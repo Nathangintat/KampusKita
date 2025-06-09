@@ -12,6 +12,9 @@ import (
 type VerifyService interface {
 	Verify(ctx context.Context, req entity.VerifyEntity) error
 	GetVerifyStatus(ctx context.Context, userId int64) (*model.VerifyStatus, error)
+	GetAllVerifyRequest(ctx context.Context) ([]entity.GetVerifyEntity, error)
+	ApproveVerifyRequest(ctx context.Context, nim string) error
+	RejectVerifyRequest(ctx context.Context, nim string) error
 }
 
 type verifyService struct {
@@ -29,7 +32,7 @@ func (v *verifyService) Verify(ctx context.Context, req entity.VerifyEntity) err
 		return err
 	}
 
-	err = v.verifyRepo.Verify(ctx, req.Nim, kpItem.ID)
+	err = v.verifyRepo.Verify(ctx, req.Nim, kpItem.ID, req.ImgType)
 
 	if err != nil {
 		code = "[SERVICE] Verify - 2"
@@ -58,6 +61,42 @@ func (v *verifyService) GetVerifyStatus(ctx context.Context, userId int64) (*mod
 	}
 
 	return verifyStatus, nil
+}
+
+func (v *verifyService) GetAllVerifyRequest(ctx context.Context) ([]entity.GetVerifyEntity, error) {
+	data, err := v.verifyRepo.GetAllVerifyRequest(ctx)
+
+	if err != nil {
+		code = "[SERVICE] GetAllVerifyRequest - 1"
+		log.Errorw(code, err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (v *verifyService) ApproveVerifyRequest(ctx context.Context, nim string) error {
+	err := v.verifyRepo.ApproveVerifyRequest(ctx, nim)
+
+	if err != nil {
+		code = "[SERVICE] ApproveVerifyRequest - 1"
+		log.Errorw(code, err)
+		return  err
+	}
+
+	return nil
+}
+
+func (v *verifyService) RejectVerifyRequest(ctx context.Context, nim string) error {
+	err := v.verifyRepo.RejectVerifyRequest(ctx, nim)
+
+	if err != nil {
+		code = "[SERVICE] RejectVerifyRequest - 1"
+		log.Errorw(code, err)
+		return  err
+	}
+
+	return nil
 }
 
 func NewVerifyService(verifyRepo repository.VerifyRepository, kpMapRepo repository.KpMapRepository, userRepo repository.UserRepository) VerifyService {
