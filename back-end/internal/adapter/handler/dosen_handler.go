@@ -19,7 +19,6 @@ type dosenHandler struct {
 }
 
 func (dh *dosenHandler) GetDosenByID(c *fiber.Ctx) error {
-
 	idParam := c.Params("dosenId")
 	dosenId, err := conv.StringToInt64(idParam)
 	if err != nil {

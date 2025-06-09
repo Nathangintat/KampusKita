@@ -3,27 +3,25 @@ package repository
 import (
 	"context"
 
-	"github.com/ThePlatypus-Person/KampusKita/internal/core/domain/entity"
 	"github.com/ThePlatypus-Person/KampusKita/internal/core/domain/model"
 	"github.com/gofiber/fiber/v2/log"
 	"gorm.io/gorm"
 )
 
 type VerifyRepository interface {
-	Verify(ctx context.Context, req entity.VerifyEntity) error
+	Verify(ctx context.Context, nim string, kpId int64) error
 }
 
 type verifyRepository struct {
 	db *gorm.DB
 }
 
-func (v *verifyRepository) Verify(ctx context.Context, req entity.VerifyEntity) error {
+func (v *verifyRepository) Verify(ctx context.Context, nim string, kpId int64) error {
 
 	verif := model.Verify{
-		Nim:        req.Nim,
-		Kampus:     req.Kampus,
-		Prodi:      req.Prodi,
-		IsVerified: req.IsVerified,
+		Nim:        nim,
+		KpID: 		kpId,
+		IsVerified: false,
 	}
 
 	err := v.db.WithContext(ctx).Create(&verif).Error

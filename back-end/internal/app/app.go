@@ -2,8 +2,7 @@ package app
 
 import (
 	"context"
-	"fmt"
-	"log"
+"log"
 	"os/signal"
 	"syscall"
 	"time"
@@ -50,6 +49,7 @@ func RunServer() {
 	verifyrepo := repository.NewVerifyRepository(db.DB)
 	reviewDosenrepo := repository.NewReviewDosenRepository(db.DB)
 	likeDislikeDosenRepo := repository.NewLikeDislikeDosenRepository(db.DB)
+	kpMapRepo := repository.NewKpMapRepository(db.DB)
 
 	// Service
 	authService := service.NewAuthService(authrepo, cfg, jwt)
@@ -59,7 +59,7 @@ func RunServer() {
 	likeDislikeService := service.NewLikeDislikeKampusService(likeDislikeRepo)
 	dosenService := service.NewDosenService(dosenrepo)
 	userService := service.NewUserService(userrepo, cfg, jwt)
-	verifyService := service.NewVerifyService(verifyrepo)
+	verifyService := service.NewVerifyService(verifyrepo, kpMapRepo, userrepo)
 	reviewDosenService := service.NewReviewDosenService(reviewDosenrepo)
 	likeDislikeDosenService := service.NewLikeDislikeDosenService(likeDislikeDosenRepo)
 
@@ -97,12 +97,11 @@ func RunServer() {
 	KampusApptoken := kampusApp.Group("/token")
 	KampusApptoken.Use(middlewareAuth.CheckToken())
 
+	// Serve images
+	app.Static("/public/", "./public/images")
+
 	//Prodi
 	api.Get("/prodi/:kampusID", prodiHandler.GetProdiByKampusID)
-
-	//Verifikasi
-	verifyApp := api.Group("/verify")
-	verifyApp.Post("/image", uploadImage)
 
 	//Kampus
 	kampusApp.Get("/", kampusHandler.GetKampus)
@@ -167,12 +166,15 @@ func RunServer() {
 }
 
 
+/*
 func uploadImage(c *fiber.Ctx) error {
-	log.Println("test");
+	nim, err := c.FormFile("nim")
+	kampusId, err := c.FormFile("kampusId")
+	prodiId, err := c.FormFile("prodiId")
 	file, err := c.FormFile("image")
 
 	if err != nil {
-		log.Println("Error uploading Image: ", err)
+		log.Println("Error: nim, kampusId, prodiId, and ktm must not be empty. ", err)
 		return c.JSON(fiber.Map{
 			"status": 500, 
 			"message": "Server error", 
@@ -192,6 +194,9 @@ func uploadImage(c *fiber.Ctx) error {
 		})
 	}
 
+	// get kpId from kampusId and prodiId
+	// add data to db
+
 	data := map[string]interface{}{
 		"imageName": imageName,
 		"header": file.Header,
@@ -204,3 +209,4 @@ func uploadImage(c *fiber.Ctx) error {
 		"data": data,
 	})
 }
+*/

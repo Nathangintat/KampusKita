@@ -27,9 +27,9 @@ CREATE TABLE IF NOT EXISTS kp_map (
 -- contoh: 535990001.jpg
 CREATE TABLE IF NOT EXISTS verify (
     nim VARCHAR(20) PRIMARY KEY,
-    kampus VARCHAR(100) NOT NULL,
-    prodi VARCHAR(100) NOT NULL,
-    is_verified BOOLEAN DEFAULT FALSE
+    kp_id INTEGER,
+    is_verified BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (kp_id) REFERENCES kp_map(id) ON DELETE SET NULL
 );
 
 -- users

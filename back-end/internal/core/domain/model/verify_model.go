@@ -1,10 +1,14 @@
 package model
 
 type Verify struct {
-	Nim        string `gorm:"primaryKey"`
-	Kampus     string `gorm:"kampus"`
-	Prodi      string `gorm:"prodi"`
-	IsVerified bool   `gorm:"is_verified"`
+	Nim        	string `gorm:"primaryKey"`
+	KpID     	int64  `gorm:"kp_id"`
+	IsVerified 	bool   `gorm:"is_verified"`
+	KPID   		*KPMap `gorm:"foreignKey:KpID; references:ID"`
+}
+
+type VerifyStatus struct {
+	Status      string `gorm:"status"`
 }
 
 func (Verify) TableName() string {

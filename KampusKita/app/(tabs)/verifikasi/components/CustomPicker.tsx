@@ -69,11 +69,11 @@ export function SelectModal({ visible, handleClose, title, list }: Props) {
                 selectedValue={1}
                 style={{ height: 50, width: 100 }}
                 onValueChange={(value) => console.log(value)}>
-                { list && (
-                    list.map((item, index) => (
-                        <Picker.Item key={index} label={item.name} value={item.id} />
-                    ))
-                )}
+                    { list && (
+                        list.map((item, index) => (
+                            <Picker.Item key={index} label={item.name} value={item.id} />
+                        ))
+                    )}
                     <Picker.Item label="Java" value="java" />
                     <Picker.Item label="JavaScript" value="js" />
                 </Picker>

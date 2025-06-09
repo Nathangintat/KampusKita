@@ -11,8 +11,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KampusPickerFetchType, PickerItemType, ProdiPickerFetchType } from './type';
+import * as SecureStore from 'expo-secure-store';
+import { useRouter } from 'expo-router';
 
 export default function VerifikasiScreen() {
+    const router = useRouter();
     const [listKampus, setListKampus] = useState<ProdiPickerFetchType[] | null>(null);
     const [listProdi, setListProdi] = useState<ProdiPickerFetchType[] | null>(null);
 
@@ -83,13 +86,14 @@ export default function VerifikasiScreen() {
     async function handleSubmit() {
         if (!nim || !selectedKampus || !selectedProdi || !ktm) return;
 
-        // upload image
         const formData = new FormData();
 
         const fileType = ktm.split(".").slice(-1);
         const fileName = `${nim}.${fileType}`;
-        console.log(fileName);
 
+        formData.append("nim", nim);
+        formData.append("kampusId", `${selectedKampus}`);
+        formData.append("prodiId", `${selectedProdi}`);
         formData.append("image", {
             uri: ktm,
             name: fileName,
@@ -97,10 +101,12 @@ export default function VerifikasiScreen() {
         } as any);
 
         try {
-            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/verify`;
-            const res = await fetch(`${url}/image`, {
+            const jwt = await SecureStore.getItemAsync('jwtToken');
+            const url = `${process.env.EXPO_PUBLIC_API_ENDPOINT}/api/user/verify`;
+            const res = await fetch(url, {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                    authorization: `Bearer ${jwt}`,
                 },
                 method: "POST",
                 body: formData,
@@ -110,7 +116,7 @@ export default function VerifikasiScreen() {
 
             const json = await res.json();
             console.log(json);
-
+            router.back();
         } catch (err) {
             console.error(err);
         }
