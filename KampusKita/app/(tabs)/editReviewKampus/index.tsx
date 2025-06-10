@@ -149,7 +149,9 @@ export default function EditReviewKampusScreen() {
 
         <ScrollView>
             <View style={{ paddingHorizontal: 28, gap: 12 }}>
-                <Title>Institut Teknologi Bandung</Title>
+            { kampus && kampus.nama &&
+                <Title>{ kampus.nama }</Title>
+            }
 
                 <RatingBar rating={fasilitas} setRating={setFasilitas}>
                     <MaterialIcons name="corporate-fare" size={24} color={Colors.text} />
