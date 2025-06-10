@@ -88,7 +88,7 @@ export default function App() {
   };
 
   const openKTMModal = (nim: string, imgType = "jpg") => {
-    setSelectedKtm(`/public/${nim}.${imgType}`);
+    setSelectedKtm(`${API}/public/${nim}.${imgType}`);
   };
 
   const closeModal = () => {
